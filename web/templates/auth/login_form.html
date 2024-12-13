@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-0 m-0">
+    <div class="col-12 mt-5">
+        <div class="form-container bg-white p-4 rounded-20">
+            <h1 class="fs-4 text-left mb-4">Wprowadź dane logowania</h1>
+            <form method="post" id="registration-form d-flex ">
+                {% csrf_token %}
+                <div class="row g-3 mb-3">
+                    <div class="col-xl-6">
+                        <label for="email" class="form-label">Twój email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Adres email" required>
+                        <div class="invalid-feedback">Podaj poprawny adres email.</div>
+                    </div>
+                    <div class="col-xl-6">
+                        <label for="password" class="form-label">Hasło</label>
+                        <div class="input-group has-validation">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Hasło" required>
+                            <button class="col-1 bg-white input-icon" type="button" id="toggle-password">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <div class="invalid-feedback">Hasło musi mieć co najmniej 8 znaków.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mt-3 d-flex flex-wrap justify-content-end align-items-middle">
+                    <a href="" class="col-12 text-end text-danger mt-4">Zapomniałeś hasła?</a>
+                    <a href="{% url 'auth:register' %}" class="col-12 text-end text-danger mt-4 mb-4">Nie masz konta? Zarejestruj.</a>
+                </div>
+                <div class="col-12 mt-3 d-flex justify-content-center align-items-middle">
+                    <button type="submit" class="btn btn-success col-6 mx-auto rounded-20">Zaloguj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/forms.js' %}"></script>
+{% endblock %}

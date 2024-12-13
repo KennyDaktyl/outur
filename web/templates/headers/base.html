@@ -1,0 +1,198 @@
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/utils.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+{% endblock %}
+
+{% block header %}
+<div class="header-container bg-white mx-auto container d-flex flex-wrap align-items-center px-3 py-2">
+    <!-- Logo -->
+    <div class="col-6 col-xl-3 d-flex align-items-center">
+        <a href="{% url 'home:home' %}" class="text-decoration-none">
+            <p class="logo text-danger p-0 m-0 fs-2 fw-bold">Outtur</p>
+        </a>
+    </div>
+
+    <!-- Wyszukiwarka -->
+    <div class="d-none col-xl-6 d-xl-flex justify-content-center align-items-center">
+        {% if search_form_on %}
+            {% include "home/forms/search_form.html" with form_classes="w-100 d-flex align-items-center" input_classes="me-2" select_classes="me-2" button_classes="" %}
+        {% endif %}
+    </div>
+
+    <!-- Przyciski użytkownika -->
+    <div class="d-none col-xl-3 d-xl-flex justify-content-end align-items-center">
+        <div class="dropdown me-2">
+            <button class="btn btn-primary dropdown-toggle rounded-20" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                Menu
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item fw-bold" href="{% url 'cms:create_event' %}">Dodaj wydarznie</a></li>
+                <li><a class="dropdown-item" href="#">Moje konto</a></li>
+                <li><a class="dropdown-item" href="#">Wiadomości</a></li>
+                <li><a class="dropdown-item" href="#">Wydarzenia w których uczestniczę</a></li>
+                <li><a class="dropdown-item mb-5" href="{% url 'profile:user_events' %}">Wydarzenia dodane</a></li>
+                <li><a class="dropdown-item mt-5" href="#">Zapomnij o mnie</a></li>
+                <li><a class="dropdown-item" href="#">Wyloguj</a></li>
+            </ul>
+        </div>
+        {% if request.user.is_authenticated %}
+            <a href="" class="btn btn-danger rounded-20">Wyloguj</a>
+        {% else %}
+            <a href="{% url 'auth:login' %}" class="btn btn-primary rounded-20">Zaloguj</a>
+        {% endif %}
+    </div>
+
+    <!-- Hamburger menu na mobile -->
+    <div class="d-flex d-xl-none col-6 justify-content-end align-items-center pb-2">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu" aria-controls="mobileMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="collapse w-100 d-xl-none mb-2">
+        <ul class="list-group">
+            <li class="list-group-item"><a href="#" class="dropdown-item">Moje konto</a></li>
+            <li class="list-group-item"><a href="#" class="dropdown-item">Wiadomości</a></li>
+            <li class="list-group-item"><a href="#" class="dropdown-item">Wydarzenia w których uczestniczę</a></li>
+            <li class="list-group-item mb-5"><a href="{% url 'profile:user_events' %}" class="dropdown-item">Wydarzenia dodane</a></li>
+            <li class="list-group-item mt-5"><a href="#" class="dropdown-item">Zapomnij o mnie</a></li>
+            <li class="list-group-item">
+                {% if request.user.is_authenticated %}
+                    <a href="" class="dropdown-item">Wyloguj</a>
+                {% else %}
+                    <a href="{% url 'auth:login' %}" class="dropdown-item">Zaloguj</a>
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+    
+    <span class="border-bottom-line w-100"></span>
+
+
+   <!-- Wyszukiwarka na mobile -->
+    <div class="col-12 d-xl-none justify-content-center align-items-center mt-2">
+        {% if search_form_on %}
+            {% include "home/forms/search_form.html" with form_classes="w-100 d-flex flex-column align-items-center" input_classes="mb-2" select_classes="mb-2 w-100" button_classes="w-100" %}
+        {% endif %}
+    </div>
+</div>
+
+{% if search_form_on %}
+    <!-- Przycisk Filtry na mobile -->
+    <div class="d-xl-none container px-3 bg-white">
+        <button class="btn btn-light mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#filtersMenuMobile" aria-expanded="false" aria-controls="filtersMenuMobile">
+            Filtry
+        </button>
+    </div>
+
+    <!-- Ukryte menu filtrów (otwiera się pod przyciskiem) -->
+    <div id="filtersMenuMobile" class="collapse bg-white container mx-auto">
+        <div class="container py-3">
+            <div class="row">
+                <!-- Lewa kolumna filtrów -->
+                <div class="col-6 m-0 p-0">
+                    <ul class="list-group col-12 mb-3 p-2">
+                        <p class="fw-bold col-12 mt-2">{{ filter_form.categories.label }}</p>
+                        {% for value, label in filter_form.categories.field.choices %}
+                            <li class="list-group-item custom-list-group-item col-12">
+                                <div class="form-check col-12 d-flex flex-wrap justify-content-start align-items-center">
+                                    <input 
+                                        class="form-check-input me-2 col-2" 
+                                        type="checkbox" 
+                                        id="id_mobile_categories_{{ value }}" 
+                                        name="{{ filter_form.categories.html_name }}" 
+                                        value="{{ value }}"
+                                        {% if value in filter_form.categories.value %} checked {% endif %}
+                                    >
+                                    <label 
+                                        class="form-check-label col-10" 
+                                        for="id_mobile_categories_{{ value }}">
+                                        {{ label }}
+                                    </label>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Prawa kolumna filtrów -->
+                <div class="col-6 m-0 p-0">
+                    <ul class="list-group col-12 mb-3 p-2">
+                        <p class="fw-bold col-12 mt-2">{{ filter_form.location_type.label }}</p>
+                        {% for value, label in filter_form.location_type.field.choices %}
+                            <li class="list-group-item custom-list-group-item col-12">
+                                <div class="form-check col-12 d-flex flex-wrap justify-content-start align-items-center">
+                                    <input 
+                                        class="col-2 form-check-input me-2 location-checkbox" 
+                                        type="checkbox" 
+                                        id="id_mobile_location_type_{{ value }}" 
+                                        name="{{ filter_form.location_type.html_name }}" 
+                                        value="{{ value }}"
+                                        {% if value in filter_form.location_type.value %} checked {% endif %}
+                                    >
+                                    <label 
+                                        class="col-10 form-check-label" 
+                                        for="id_mobile_location_type_{{ value }}">
+                                        {{ label }}
+                                    </label>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <ul class="list-group col-12 mb-3 p-2">
+                        <p class="fw-bold col-12 mt-2">{{ filter_form.entry_type.label }}</p>
+                        {% for value, label in filter_form.entry_type.field.choices %}
+                            <li class="list-group-item custom-list-group-item col-12">
+                                <div class="form-check col-12 d-flex flex-wrap justify-content-start align-items-center">
+                                    <input 
+                                        class="col-2 form-check-input me-2 entry-checkbox" 
+                                        type="checkbox" 
+                                        id="id_mobile_entry_{{ value }}" 
+                                        name="{{ filter_form.entry_type.html_name }}" 
+                                        value="{{ value }}"
+                                        {% if value in filter_form.entry_type.value %} checked {% endif %}
+                                    >
+                                    <label 
+                                        class="col-10 form-check-label" 
+                                        for="id_mobile_entry_{{ value }}">
+                                        {{ label }}
+                                    </label>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <ul class="list-group col-12 mb-3 p-2">
+                        <p class="fw-bold col-12 mt-2">{{ filter_form.added_by.label }}</p>
+                        {% for value, label in filter_form.added_by.field.choices %}
+                            <li class="list-group-item custom-list-group-item col-12">
+                                <div class="form-check col-12 d-flex flex-wrap justify-content-start align-items-center">
+                                    <input 
+                                        class="col-2 form-check-input me-2 added-by-checkbox" 
+                                        type="checkbox" 
+                                        id="id_mobile_added_by_{{ value }}" 
+                                        name="{{ filter_form.added_by.html_name }}" 
+                                        value="{{ value }}"
+                                        {% if value in filter_form.added_by.value %} checked {% endif %}
+                                    >
+                                    <label 
+                                        class="col-10 form-check-label" 
+                                        for="id_mobile_added_by_{{ value }}">
+                                        {{ label }}
+                                    </label>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

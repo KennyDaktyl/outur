@@ -1,0 +1,93 @@
+<form method="get" class="filters_form d-xl-flex col-12 justify-content-start align-items-start flex-column border-end p-0 m-0 bg-white">
+    <ul class="list-group col-12 mb-3 p-2">
+        <p class="fw-bold col-12 mt-2">{{ filter_form.categories.label }}</p>
+        {% for value, label in filter_form.categories.field.choices %}
+            <li class="list-group-item custom-list-group-item col-12">
+                <div class="form-check col-12 d-flex flex-wrap justify-content-start align-items-center">
+                    <input 
+                        class="form-check-input me-2 col-2" 
+                        type="checkbox" 
+                        id="id_categories_{{ value }}" 
+                        name="{{ filter_form.categories.html_name }}" 
+                        value="{{ value }}"
+                        {% if value in filter_form.categories.value %} checked {% endif %}
+                    >
+                    <label 
+                        class="form-check-label col-10" 
+                        for="id_categories_{{ value }}">
+                        {{ label }}
+                    </label>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <ul class="list-group col-12 mb-3 p-2">
+        <p class="fw-bold col-12 mt-2">{{ filter_form.location_type.label }}</p>
+        {% for value, label in filter_form.location_type.field.choices %}
+            <li class="list-group-item custom-list-group-item col-12">
+                <div class="form-check col-12 d-flex flex-wrap justify-content-start align-items-center">
+                    <input 
+                        class="col-2 form-check-input me-2 location-checkbox" 
+                        type="checkbox" 
+                        id="id_location_type_{{ value }}" 
+                        name="{{ filter_form.location_type.html_name }}" 
+                        value="{{ value }}"
+                        {% if value in filter_form.location_type.value %} checked {% endif %}
+                    >
+                    <label 
+                        class="col-10 form-check-label" 
+                        for="id_location_type_{{ value }}">
+                        {{ label }}
+                    </label>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+    
+    <ul class="list-group col-12 mb-3 p-2">
+        <p class="fw-bold col-12 mt-2">{{ filter_form.entry_type.label }}</p>
+        {% for value, label in filter_form.entry_type.field.choices %}
+            <li class="list-group-item custom-list-group-item col-12">
+                <div class="form-check col-12 d-flex flex-wrap justify-content-start align-items-center">
+                    <input 
+                        class="col-2 form-check-input me-2 entry-checkbox" 
+                        type="checkbox" 
+                        id="id_entry_{{ value }}" 
+                        name="{{ filter_form.entry_type.html_name }}" 
+                        value="{{ value }}"
+                        {% if value in filter_form.entry_type.value %} checked {% endif %}
+                    >
+                    <label 
+                        class="col-10 form-check-label" 
+                        for="id_entry_{{ value }}">
+                        {{ label }}
+                    </label>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+    
+    <ul class="list-group col-12 mb-3 p-2">
+        <p class="fw-bold col-12 mt-2">{{ filter_form.added_by.label }}</p>
+        {% for value, label in filter_form.added_by.field.choices %}
+            <li class="list-group-item custom-list-group-item col-12">
+                <div class="form-check col-12 d-flex flex-wrap justify-content-start align-items-center">
+                    <input 
+                        class="col-2 form-check-input me-2 added-by-checkbox" 
+                        type="checkbox" 
+                        id="id_added_by_{{ value }}" 
+                        name="{{ filter_form.added_by.html_name }}" 
+                        value="{{ value }}"
+                        {% if value in filter_form.added_by.value %} checked {% endif %}
+                    >
+                    <label 
+                        class="col-10 form-check-label" 
+                        for="id_added_by_{{ value }}">
+                        {{ label }}
+                    </label>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</form>

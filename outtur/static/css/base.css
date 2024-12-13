@@ -1,0 +1,28 @@
+body {
+    background-color: #dddad9;
+}
+
+a {
+    text-decoration: none;
+}
+
+a.event-title:hover {
+    text-decoration: underline;
+}
+
+a.map-link:hover {
+    font-weight: 700;
+}
+
+i.add-user-to-event:hover {
+    scale: 1.2;
+    cursor: pointer;
+}
+
+.form-check-input,
+.form-check-label {
+    -ms-user-select: none;
+    -webkit-user-select: none; 
+    -moz-user-select: none; 
+    user-select: none;
+}

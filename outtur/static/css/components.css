@@ -1,0 +1,108 @@
+.header-container {
+    min-height: 100px;
+}
+
+.border-bottom-line {
+    border-bottom: 1px solid #0a0a0a;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+.search-button {
+    background-color: #e47d08;
+}
+
+.list-group-item {
+    text-decoration: none;
+    padding: 0;
+    border: 1px solid white;
+}
+
+.list-group-item :hover {
+    cursor: pointer;
+}
+
+.custom-list-group-item:hover {
+    background-color: #f8f9fa; 
+    cursor: pointer; 
+}
+
+.navbar-toggler {
+    background-color: #f8f9fa; 
+    border: 1px solid #ddd; 
+    border-radius: 5px;
+    padding: 5px 10px; 
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba%280, 0, 0, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    width: 25px; 
+    height: 25px;
+}
+
+.modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Ukrycie przewijania */
+    height: 80vh; /* Wysokość modalnego okna w zależności od wysokości widoku */
+}
+
+.img-container {
+    position: relative;
+    width: 100%; /* Zajmuje całą szerokość */
+    height: 100%; /* Dopasowanie do wysokości modala */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+
+.img-container img {
+    max-width: 100%; /* Dopasowanie do szerokości */
+    max-height: 100%; /* Dopasowanie do wysokości */
+    object-fit: contain; /* Obraz dopasowany bez obcięcia */
+}
+
+.form-check-input:checked {
+    background-color: #4caf50;
+    border-color: #4caf50;
+}
+
+.form-check-input:hover {
+    cursor: pointer;
+}
+
+#loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+.event-item {
+    min-height: 390px;
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #e47d08;
+    border-color: #e47d08;
+}
+.page-item:not(:first-child) .page-link {
+    margin-left: -1px;
+}
+.page-link {
+    padding: .375rem .75rem;
+}
+.page-link {
+    position: relative;
+    display: block;
+    color: #e47d08;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}

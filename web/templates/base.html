@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+
+    <title>{% block title %}Tytuł domyślny{% endblock %}</title>
+    
+    <!-- Blok na dodatkowe meta tagi -->
+    {% block meta %}
+    {% endblock %}
+
+    <!-- Blok na style CSS -->
+    {% block css %}
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
+        <link rel="stylesheet" href="{% static 'css/utils.css' %}">
+        <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <!-- Blok na nagłówki -->
+        {% block header %}
+            {% include "headers/base.html" %}
+        {% endblock %}
+    </header>
+
+    <main>
+        <div class="mx-auto w-100 d-flex justify-content-center flex-wrap align-items-center px-3 py-2">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+    
+    <footer>
+        <!-- Blok na stopkę -->
+        {% block footer %}
+       
+        {% endblock %}
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    
+    <!-- Blok na skrypty JavaScript -->
+    {% block js %}
+        <script src="{% static 'js/main.js' %}"></script>
+    {% endblock %}
+</body>
+</html>

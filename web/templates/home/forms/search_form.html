@@ -1,0 +1,25 @@
+<form class="{{ form_classes }}" method="get" action="">
+    <!-- Pole wyszukiwania -->
+    <input 
+        type="text" 
+        name="query" 
+        class="form-control {{ input_classes }}" 
+        placeholder="Szukaj wydarzenia" 
+        aria-label="Szukaj wydarzenia"
+        value="{{ request.GET.query|default_if_none:'' }}"
+    >
+
+    <!-- Select do sortowania -->
+    <select 
+        name="sort" 
+        class="form-select {{ select_classes }}" 
+        aria-label="Sortuj według">
+        <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>sortuj: Najnowsze</option>
+        <option value="popularity" {% if request.GET.sort == 'popularity' %}selected{% endif %}>sortuj: Popularność</option>
+        <option value="participants" {% if request.GET.sort == 'participants' %}selected{% endif %}>sortuj: Liczba uczestników</option>
+        <option value="nearest" {% if request.GET.sort == 'nearest' %}selected{% endif %}>sortuj: Najbliżej mnie</option>
+    </select>
+
+    <!-- Przycisk wyszukiwania -->
+    <button class="btn search-button text-white {{ button_classes }}" type="submit">Szukaj</button>
+</form>

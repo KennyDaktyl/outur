@@ -1,0 +1,67 @@
+{% load query_transform %}
+
+{% for event in events %}
+    <div class="card event-item w-100 d-flex flex-row bg-white shadow-sm border-0 mb-3">
+        <!-- Tekst -->
+        <div class="card-body col-12 d-flex flex-column">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <a href="{% url 'home:event_details' pk=event.pk %}" class="card-title event-title col-9 text-dark fw-bold mb-2">
+                    <h5>{{ event.name }}</h5>
+                </a>
+                <div class="col-3 d-flex justify-content-end align-items-center">
+                    <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size=""><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Udostępnij</a></div>
+                </div>
+            </div>
+            <div class="col-12 d-flex flex-wrap justify-content-between align-items-center">
+                <p class="col-12 col-xl-8 text-dark mb-2">{{ event.postal_code }}, {{ event.city }}, {{ event.street }}&nbsp;{{ event.house_number }}{% if event.apartment_number %}{{ event.apartment_number }}{% endif %}</p>
+                <div class="col-12 col-xl-3 d-flex justify-content-end align-items-center">
+                    {% if event.event_type == 'one_day' %}
+                    <span>{{ event.one_day_date }}</span>
+                    {% elif event.event_type == 'is_multi_day' %}
+                        <span>{{ event.start_date }}&nbsp;-&nbsp;{{ event.end_date  }}</span>
+                    {% else %}
+                        <div class="event-days col-12">
+                            {{ event.get_day_of_week_display }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="d-flex flex-wrap justify-content-between align-items-start mt-2">
+                <p class="col-card-text text-dark {% if event.main_image %}col-12 col-xl-8{% else %}col-12{% endif %}">{{ event.short_description|truncatechars:550 }}</p>
+                {% if event.main_image %}
+                    <!-- Zdjęcie -->
+                    <div class="col-12 col-xl-4 p-0">
+                            <img src="{{ event.main_image.url }}" alt="{{ event.name }}" class="w-100 h-100 object-fit-cover" style="aspect-ratio: 4/3; object-fit: cover;">
+                    </div>
+                {% endif %}
+            </div>
+            <div class="d-flex justify-content-between align-items-middle mt-2">
+                <div class="col-6 text-left">
+                    <a href="#" class="card-text map-link text-dark text-decoration-underline">mapa</a>
+                </div>
+                <div class="col-6 text-end">
+                    <span id="users-count-{{ event.id }}">{{ event.users_count }}</span>
+                    {% if user.is_authenticated %}
+                        <!-- Ikona do dodania użytkownika do wydarzenia -->
+                        <i class="fa-solid add-user-to-event fa-users text-dark fs-5" 
+                            data-event-id="{{ event.id }}" 
+                            style="cursor: pointer;"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Kliknij, aby dołączyć do wydarzenia"
+                            onclick="addUserToEvent(this)"
+                            ></i>
+                    {% else %}
+                        <!-- Ikona z chmurką informującą o konieczności zalogowania -->
+                        <i class="fa-solid fa-users text-dark fs-5" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Zaloguj się, aby dołączyć do wydarzenia" 
+                            style="cursor: not-allowed;"></i>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+

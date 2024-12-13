@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% csrf_token %}
+
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/pl_PL/sdk.js#xfbml=1&version=v21.0&appId=1766955874049180"></script>
+
+<div class="container mt-2 p-0 m-0">
+    <div class="d-flex flex-wrap justify-content-start align-items-start">
+        <!-- Lewa kolumna - Menu kategorii -->
+        <div class="d-none d-xl-flex col-xl-2">
+            {% include "events/includes/filters_event.html" %}
+        </div>
+
+        <!-- Prawa kolumna - Lista wydarzeń i paginacja -->
+        <div class="col-12 col-xl-10 d-flex justify-content-start align-items-start flex-wrap p-0 m-0 mx-auto ps-xl-2">
+            <!-- Lista wydarzeń -->
+            <div class="event_listing col-12 d-flex justify-content-start align-items-start flex-wrap">
+                {% include "events/includes/event_listing.html" %}
+            </div>
+
+            <!-- Paginacja -->
+            <div class="pagination-container col-12 d-flex justify-content-center align-items-start">
+                {% include "utils/pagination.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loading-spinner" class="text-center my-4" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Ładowanie...</span>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/events.js' %}"></script>
+    <script src="{% static 'js/filters_events.js' %}"></script>
+{% endblock %}
