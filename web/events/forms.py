@@ -29,3 +29,46 @@ class EventFilterForm(forms.Form):
         label="Dodane przez",
         required=False
     )
+    
+
+class AbuseReportForm(forms.Form):
+    title = forms.CharField(
+        max_length=255,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Temat zgłoszenia',
+        }),
+        label="Temat zgłoszenia", 
+    )
+    description = forms.CharField(
+        max_length=500,
+        required=True,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Podaj treść zgłoszenia',
+            'rows': 3,
+        }),
+        label="Treść zgłoszenia",
+    )
+
+
+class MessageForm(forms.Form):
+    event = forms.IntegerField(
+        required=True,
+        widget=forms.HiddenInput(),
+    )
+    user = forms.IntegerField(
+        required=True,
+        widget=forms.HiddenInput(),
+    )
+    message = forms.CharField(
+        max_length=300,
+        required=True,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Wpisz maksymalnie 300 znaków',
+            'rows': 3,
+        }),
+        label="Wiadomość",
+    )

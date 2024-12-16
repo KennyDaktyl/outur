@@ -1,3 +1,5 @@
+import folium
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -5,7 +7,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.utils.safestring import mark_safe
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.template.loader import render_to_string
 from web.models.events import Event, EventParticipant
 from .forms import EventFilterForm
 
@@ -64,4 +66,42 @@ def ajax_filter_events(request):
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 
+def ajax_filter_events_map(request):
+    if request.method == "GET":
+        filter_form = EventFilterForm(request.GET)
+        if filter_form.is_valid():
+            events = Event.objects.all()
+            if filter_form.cleaned_data.get('categories'):
+                events = events.filter(categories__in=filter_form.cleaned_data['categories']).distinct()
+            if filter_form.cleaned_data.get('location_type'):
+                events = events.filter(location_type=filter_form.cleaned_data['location_type'])
+            if filter_form.cleaned_data.get('entry_type'):
+                events = events.filter(entry_type=filter_form.cleaned_data['entry_type'])
+            if filter_form.cleaned_data.get('added_by'):
+                events = events.filter(added_by=filter_form.cleaned_data['added_by'])
+        else:
+            events = Event.objects.all()
 
+        # Tworzenie mapy z filtrowanymi wydarzeniami
+        map_center = [52.0, 19.0]  # Współrzędne centralne dla mapy
+        folium_map = folium.Map(location=map_center, zoom_start=6)
+
+        for event in events:
+            if event.location:
+                latitude = event.location.y
+                longitude = event.location.x
+                popup_content = render_to_string("events/includes/popup_content.html", {"event": event})
+                folium.Marker(
+                    location=[latitude, longitude],
+                    popup=folium.Popup(popup_content, max_width=300),
+                    tooltip=event.name,
+                    icon=folium.Icon(color="blue", icon="info-sign")
+                ).add_to(folium_map)
+
+        # Render mapy HTML
+        map_html = folium_map._repr_html_()
+
+        return JsonResponse({
+            "map_html": map_html,  # Nowa mapa
+        })
+    return JsonResponse({"error": "Invalid request"}, status=400)

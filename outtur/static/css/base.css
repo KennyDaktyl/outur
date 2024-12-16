@@ -26,3 +26,7 @@ i.add-user-to-event:hover {
     -moz-user-select: none; 
     user-select: none;
 }
+
+.bg-orange {
+    background-color: #e47d08;
+}

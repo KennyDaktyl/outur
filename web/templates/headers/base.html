@@ -10,7 +10,7 @@
 <div class="header-container bg-white mx-auto container d-flex flex-wrap align-items-center px-3 py-2">
     <!-- Logo -->
     <div class="col-6 col-xl-3 d-flex align-items-center">
-        <a href="{% url 'home:home' %}" class="text-decoration-none">
+        <a href="{% url 'events:events_list' %}" class="text-decoration-none">
             <p class="logo text-danger p-0 m-0 fs-2 fw-bold">Outtur</p>
         </a>
     </div>
@@ -25,21 +25,27 @@
     <!-- Przyciski użytkownika -->
     <div class="d-none col-xl-3 d-xl-flex justify-content-end align-items-center">
         <div class="dropdown me-2">
+            {% if request.resolver_match.url_name == 'events_map' %}
+                <a href="{% url 'events:events_list' %}" class="btn btn-light rounded-20">Lista</a>
+            {% endif %}
+            {% if request.resolver_match.url_name == 'events_list' %}
+                <a href="{% url 'events:events_map' %}" class="btn btn-light rounded-20">Mapa</a>
+            {% endif %}
             <button class="btn btn-primary dropdown-toggle rounded-20" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                 Menu
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                 <li><a class="dropdown-item fw-bold" href="{% url 'cms:create_event' %}">Dodaj wydarznie</a></li>
                 <li><a class="dropdown-item" href="#">Moje konto</a></li>
-                <li><a class="dropdown-item" href="#">Wiadomości</a></li>
-                <li><a class="dropdown-item" href="#">Wydarzenia w których uczestniczę</a></li>
+                <li><a class="dropdown-item" href="{% url 'profile:user_event_messages' %}">Wiadomości</a></li>
+                <li><a class="dropdown-item" href="{% url 'profile:user_events_joined' %}">Wydarzenia w których uczestniczę</a></li>
                 <li><a class="dropdown-item mb-5" href="{% url 'profile:user_events' %}">Wydarzenia dodane</a></li>
                 <li><a class="dropdown-item mt-5" href="#">Zapomnij o mnie</a></li>
-                <li><a class="dropdown-item" href="#">Wyloguj</a></li>
+                <li><a class="dropdown-item" href="{% url 'auth:logout' %}">Wyloguj</a></li>
             </ul>
         </div>
         {% if request.user.is_authenticated %}
-            <a href="" class="btn btn-danger rounded-20">Wyloguj</a>
+            <a href="{% url 'auth:logout' %}" class="btn btn-danger rounded-20">Wyloguj</a>
         {% else %}
             <a href="{% url 'auth:login' %}" class="btn btn-primary rounded-20">Zaloguj</a>
         {% endif %}
@@ -62,7 +68,7 @@
             <li class="list-group-item mt-5"><a href="#" class="dropdown-item">Zapomnij o mnie</a></li>
             <li class="list-group-item">
                 {% if request.user.is_authenticated %}
-                    <a href="" class="dropdown-item">Wyloguj</a>
+                    <a href="{% url 'auth:logout' %}" class="dropdown-item">Wyloguj</a>
                 {% else %}
                     <a href="{% url 'auth:login' %}" class="dropdown-item">Zaloguj</a>
                 {% endif %}
@@ -83,10 +89,16 @@
 
 {% if search_form_on %}
     <!-- Przycisk Filtry na mobile -->
-    <div class="d-xl-none container px-3 bg-white">
+    <div class="d-flex d-xl-none container justify-content-between align-items-center px-3 bg-white">
         <button class="btn btn-light mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#filtersMenuMobile" aria-expanded="false" aria-controls="filtersMenuMobile">
             Filtry
         </button>
+        {% if request.resolver_match.url_name == 'events_map' %}
+                <a href="{% url 'events:events_list' %}" class="btn btn-light rounded-20">Lista</a>
+        {% endif %}
+        {% if request.resolver_match.url_name == 'events_list' %}
+            <a href="{% url 'events:events_map' %}" class="btn btn-light rounded-20">Mapa</a>
+        {% endif %}
     </div>
 
     <!-- Ukryte menu filtrów (otwiera się pod przyciskiem) -->

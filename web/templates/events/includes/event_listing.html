@@ -1,11 +1,14 @@
 {% load query_transform %}
 
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/pl_PL/sdk.js#xfbml=1&version=v21.0&appId=1766955874049180"></script>
+
 {% for event in events %}
     <div class="card event-item w-100 d-flex flex-row bg-white shadow-sm border-0 mb-3">
         <!-- Tekst -->
         <div class="card-body col-12 d-flex flex-column">
             <div class="col-12 d-flex justify-content-between align-items-center">
-                <a href="{% url 'home:event_details' pk=event.pk %}" class="card-title event-title col-9 text-dark fw-bold mb-2">
+                <a href="{% url 'events:event_details' pk=event.pk %}" class="card-title event-title col-9 text-dark fw-bold mb-2">
                     <h5>{{ event.name }}</h5>
                 </a>
                 <div class="col-3 d-flex justify-content-end align-items-center">
@@ -37,7 +40,11 @@
             </div>
             <div class="d-flex justify-content-between align-items-middle mt-2">
                 <div class="col-6 text-left">
-                    <a href="#" class="card-text map-link text-dark text-decoration-underline">mapa</a>
+                    {% if event.location %}
+                        <a href="{% url 'events:event_map' pk=event.id %}" class="card-text map-link text-dark text-decoration-underline">mapa</a>
+                    {% else %}
+                        <span class="card-text text-dark">brak lokalizacji</span>
+                    {% endif %}
                 </div>
                 <div class="col-6 text-end">
                     <span id="users-count-{{ event.id }}">{{ event.users_count }}</span>
@@ -61,7 +68,72 @@
                     {% endif %}
                 </div>
             </div>
+            {% if request.resolver_match.url_name == 'user_events' %}
+            <div class="col-12 d-flex align-items-middle justify-content-between mt-5">
+                <a href="{% url 'cms:update_event' pk=event.pk %}" class="btn rounded-20 bg-orange text-white">Edytuj</a>
+                <button type="button" class="btn rounded-20 bg-orange text-white" data-bs-toggle="modal" data-bs-target="#messageModal_{{ event.id }}">
+                    Wyślij wiadomość
+                </button>
+            </div>
+            {% endif %}
         </div>
     </div>
+
+    {% if form %}
+        <!-- Modal -->
+        <div class="modal fade" id="messageModal_{{ event.id }}" tabindex="-1" aria-labelledby="messageModalLabel_{{ event.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="messageModalLabel_{{ event.id }}">{{ event.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'profile:send_message' event_id=event.id %}" method="post" class="col-12">
+                            {% csrf_token %}
+                            <input type="hidden" name="event" id="id_event" value="{{ event.id }}">
+                            <input type="hidden" name="user" id="id_user" value="{{ request.user.id }}">
+                            <textarea id="{{ form.message.id_for_label }}" 
+                                    name="{{ form.message.html_name }}" 
+                                    class="form-control" 
+                                    placeholder="{{ form.message.field.widget.attrs.placeholder|default:'Podaj wiadomość dla wydarzenia' }}" 
+                                    maxlength="{{ form.message.field.max_length }}" 
+                                    rows="3" 
+                                    {% if form.message.field.required %}required{% endif %}>{{ form.description.value|default_if_none:'' }}</textarea>
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="submit" class="btn rounded-20 bg-orange text-white me-2">Wyślij</button>
+                                <button type="button" class="btn btn-secondary rounded-20" data-bs-dismiss="modal">Anuluj</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if request.resolver_match.url_name == 'user_events' %}
+        {% include 'events/includes/event_messages.html' with messages=event.messages.all %}
+    {% endif %}
 {% endfor %}
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const showFormButton = document.getElementById("show-message-form");
+        const hideFormButton = document.getElementById("hide-message-form");
+        const messageFormContainer = document.getElementById("message-form-container");
+
+        // Pokaż formularz po kliknięciu przycisku "Wyślij wiadomość"
+        if (showFormButton && messageFormContainer) {
+            showFormButton.addEventListener("click", () => {
+                messageFormContainer.style.display = "block";
+            });
+        }
+
+        // Ukryj formularz po kliknięciu przycisku "Anuluj"
+        if (hideFormButton && messageFormContainer) {
+            hideFormButton.addEventListener("click", () => {
+                messageFormContainer.style.display = "none";
+            });
+        }
+    });
+</script>

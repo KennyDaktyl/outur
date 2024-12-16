@@ -196,6 +196,49 @@ class Event(models.Model):
     def users_count(self):
         return self.participants.count()
     
+    @property
+    def address(self):
+        if self.apartment_number:
+            return f"{self.street} {self.house_number}/{self.apartment_number} , {self.postal_code} {self.city}"
+        return f"{self.street} {self.house_number} , {self.postal_code} {self.city}"
+    
+    @property
+    def date_info(self):
+        if self.event_type == "one_day":
+            return self.one_day_date.strftime("%d-%m-%Y %H:%M")
+        elif self.event_type == "multi_day":
+            return f"{self.start_date.strftime('%d-%m-%Y %H:%M')} - {self.end_date.strftime('%d-%m-%Y %H:%M')}"
+        else:
+            return f"{self.get_day_of_week_display()}"
+        
+    @property
+    def gallery_images(self):
+        gallery = []
+        if self.gallery_image_1:
+            gallery.append(self.gallery_image_1)
+        if self.gallery_image_2:
+            gallery.append(self.gallery_image_2)
+        if self.gallery_image_3:
+            gallery.append(self.gallery_image_3)
+        if self.gallery_image_4:
+            gallery.append(self.gallery_image_4)
+        return gallery
+
+
+class EventMessage(models.Model):
+    event = models.ForeignKey(Event, related_name="messages", on_delete=models.CASCADE, db_index=True)
+    user = models.ForeignKey(User, related_name="event_messages", on_delete=models.CASCADE, db_index=True)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Wiadomość"
+        verbose_name_plural = "Wiadomości"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.event.name}"
+    
 
 class EventParticipant(models.Model):
     event = models.ForeignKey(Event, related_name="participants", on_delete=models.CASCADE)

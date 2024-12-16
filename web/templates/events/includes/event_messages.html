@@ -1,0 +1,11 @@
+{% for message in messages %}
+    <div class="w-100 d-flex flex-wrap bg-white shadow-sm border-0 mb-3 p-3">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h5>{{ message.event.name }}</h5>
+            <p>Wysłano:&nbsp;{{ message.created_at }}</p>
+        </div>
+        <div class="col-12">
+            <p>{{ message.message }}</p>
+        </div>
+    </div>
+{% endfor %}

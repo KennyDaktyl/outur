@@ -1,0 +1,21 @@
+<div style="width: 300px;">
+    {% if event.main_image %}
+        <img src="{{ event.main_image.url }}" alt="{{ event.name }}" style="width: 100%; height: auto;"/>
+    {% endif %}
+    <a href="{% url 'events:event_details' pk=event.pk %}" target="_blank">
+        <h4 class="mt-2">{{ event.name }}</h4>
+    </a>
+    <div class="col-12 col-xl-3 d-flex justify-content-end align-items-center">
+        {% if event.event_type == 'one_day' %}
+            <span>{{ event.one_day_date }}</span>
+        {% elif event.event_type == 'is_multi_day' %}
+            <span>{{ event.start_date }}&nbsp;-&nbsp;{{ event.end_date  }}</span>
+        {% else %}
+            <div class="event-days col-12 mt-2">
+                {{ event.get_day_of_week_display }}
+            </div>
+        {% endif %}
+    </div>
+    <p>{{ event.address }}</p>
+    <p>{{ event.description|truncatechars:100 }}</p>
+</div>

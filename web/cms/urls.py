@@ -5,6 +5,6 @@ app_name = "cms"
 
 
 urlpatterns = [
-    path('create_event/', EventCreateView.as_view(), name='create_event'),
-    path('update_event/<int:pk>/', EventUpdateView.as_view(), name='update_event'),
+    path('dodaj-wydarzenie/', EventCreateView.as_view(), name='create_event'),
+    path('edytuj-wydarzenie/<int:pk>/', EventUpdateView.as_view(), name='update_event'),
 ]

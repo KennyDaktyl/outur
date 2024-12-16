@@ -11,6 +11,8 @@ if os.environ.get('DEBUG') == 'True':
 else:
     ALLOWED_HOSTS = []
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

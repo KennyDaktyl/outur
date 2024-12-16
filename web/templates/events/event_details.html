@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/pl_PL/sdk.js#xfbml=1&version=v21.0&appId=1766955874049180"></script>
+
+<div class="container my-5 bg-white shadow-sm p-4 rounded">
+    <!-- Nagłówek z nazwą wydarzenia -->
+    <div class="row align-items-center mb-4">
+        <div class="col-xl-10">
+            <h1 class="text-dark fw-bold fs-3">{{ event.name }}</h1>
+        </div>
+        <div class="col-xl-2 text-end">
+            <div class="d-flex justify-content-end align-items-center">
+                <span class="me-2">146</span>
+                <i class="fa fa-heart text-danger" aria-hidden="true"></i>
+                <div class="ms-3">
+                    <div class="fb-share-button" 
+                        data-href="{{ request.build_absolute_uri }}" 
+                        data-layout="button" 
+                        data-size="small">
+                        <a target="_blank" 
+                            href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                            class="fb-xfbml-parse-ignore">
+                            Udostępnij
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Główna sekcja wydarzenia -->
+    <div class="row">
+        <!-- Zdjęcie główne -->
+        <div class="col-12 mb-4">
+            {% if event.main_image %}
+                <img src="{{ event.main_image.url }}" class="img-fluid rounded shadow" alt="{{ event.name }}">
+            {% else %}
+                <img src="{% static 'images/placeholder.jpg' %}" class="img-fluid rounded shadow" alt="Placeholder">
+            {% endif %}
+        </div>
+
+        <!-- Szczegóły wydarzenia -->
+        <div class="col-lg-12 d-flex flex-wrap">
+            <p class="col-12">{{ event.address }}</p>
+            <div class="col-xl-5 p-0 m-0 d-flex">
+                <strong>Dodane przez {{ event.get_added_by_display }}:&nbsp;</strong> 
+                <a href="#" class="text-dark text-decoration-underline">{{ event.created_by.username }}</a>
+            </div>
+            <p class="col-xl-5 p-0 m-0">{{ event.date_info }}</p>
+
+            <!-- Opis wydarzenia -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h3 class="fw-bold mb-3">Opis wydarzenia</h3>
+                    <p>{{ event.description|linebreaks }}</p>
+                </div>
+            </div>
+
+            <p class="col-12 mt-4">
+                <strong>Szczegóły:</strong>
+            </p>
+            <p class="col-12 p-0 m-0">Kontakt:&nbsp;<a href="mailto:{{ event.contact_email }}" class="text-dark">{{ event.contact_email }}</a></p>
+            <p class="col-12 p-0 m-0">Strona:&nbsp;<a href="{{ event.website }}" target="_blank" class="text-dark">{{ event.website }}</a></p>
+            <p class="col-12 p-0 m-0">Wstęp:&nbsp;{{ event.get_entry_type_display }}</p>
+            <p class="col-12 p-0 m-0">Rodzaj:&nbsp;{% for category in event.categories.all %}<span>{{ category.name }}{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</p>
+            <p class="col-12 p-0 m-0">Cykl imprezy:&nbsp;{{ event.get_event_type_display }}</p>
+        </div>
+    </div>
+
+    {% if event.gallery_images %}
+    <!-- Galeria zdjęć -->
+    <div class="row my-5">
+        <div class="col-12">
+            <h3 class="fw-bold mb-3">Galeria</h3>
+        </div>
+        {% for image in event.gallery_images %}
+            {% if image %}
+                <div class="col-md-3 mb-3">
+                    <img src="{{ image.url }}" class="img-fluid rounded shadow" alt="Zdjęcie galerii">
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Przycisk zgłaszania nadużycia -->
+<div class="row my-5">
+    <div class="col-12 text-start">
+        {% if user.is_authenticated %}
+            <!-- Pokazuje formularz tylko jeśli użytkownik jest zalogowany -->
+            <button type="button" class="btn btn-primary btn-lg rounded-pill" id="toggle-form">
+                Zgłoś nadużycie
+            </button>
+        {% else %}
+            <!-- Przycisk z tooltipem dla niezalogowanego użytkownika -->
+            <a href="#" 
+               class="btn btn-primary btn-lg rounded-pill" 
+               data-bs-toggle="tooltip" 
+               data-bs-placement="top" 
+               title="Aby zgłosić nadużycie, musisz być zalogowany">
+                Zgłoś nadużycie
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Formularz zgłaszania nadużycia -->
+{% if user.is_authenticated %}
+    <form method="post" enctype="multipart/form-data" id="event-form" style="display: none;">
+        {% csrf_token %}
+        <!-- Nazwa i krótki opis -->
+        <div class="row g-3 mb-3">
+            <div class="col-xl-6 col-12">
+                <label for="{{ form.title.id_for_label }}" class="form-label col-12">
+                    {{ form.title.label }}
+                </label>
+                <input type="text" 
+                       id="{{ form.title.id_for_label }}" 
+                       name="{{ form.title.html_name }}" 
+                       class="form-control" 
+                       value="{{ form.title.value|default_if_none:'' }}" 
+                       placeholder="{{ form.title.field.widget.attrs.placeholder|default:'Podaj nazwę wydarzenia' }}" 
+                       maxlength="{{ form.title.field.max_length }}" 
+                       {% if form.title.field.required %}required{% endif %}>
+                {% if form.title.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.title.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <!-- Pole: Krótki opis wydarzenia -->
+            <div class="col-12">
+                <label for="{{ form.description.id_for_label }}" class="form-label col-12">
+                    {{ form.description.label }}
+                </label>
+                <textarea id="{{ form.description.id_for_label }}" 
+                        name="{{ form.description.html_name }}" 
+                        class="form-control" 
+                        placeholder="{{ form.description.field.widget.attrs.placeholder|default:'Podaj krótki opis wydarzenia' }}" 
+                        maxlength="{{ form.description.field.max_length }}" 
+                        rows="3" 
+                        {% if form.description.field.required %}required{% endif %}>{{ form.description.value|default_if_none:'' }}</textarea>
+            </div>
+        </div>
+        <div class="col-12 d-flex justify-content-between align-items-middle">
+            <button type="submit" class="btn rounded-20 btn-primary">Wyślij</button>
+            <button type="button" class="btn rounded-20 bg-orange text-white">Anuluj</button>
+        </div>
+    </form>
+{% endif %}
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inicjalizacja Bootstrap Tooltip
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Obsługa przycisku do pokazywania formularza
+        const toggleFormButton = document.getElementById("toggle-form");
+        const form = document.getElementById("event-form");
+        if (toggleFormButton && form) {
+            toggleFormButton.addEventListener("click", () => {
+                form.style.display = form.style.display === "none" ? "block" : "none";
+            });
+        }
+    });
+</script>
+{% endblock %}

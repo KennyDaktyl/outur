@@ -1,6 +1,6 @@
 from django.contrib import admin
 from web.models.categories import Category
-from web.models.events import Event, EventParticipant
+from web.models.events import Event, EventMessage, EventParticipant
 
 from django.contrib.admin import ModelAdmin
 from django.contrib.gis.db import models
@@ -65,3 +65,18 @@ class EventCategoryAdmin(GISModelAdmin):
 @admin.register(EventParticipant)
 class EventParticipantAdmin(admin.ModelAdmin):
     list_display = ("event", "user")
+    
+
+@admin.register(EventMessage)
+class EventMessageAdmin(admin.ModelAdmin):
+    list_display = ("event", "user", "created_at")
+    search_fields = ("event__name", "user__username")
+    list_filter = ("event", "user")
+    list_per_page = 20
+    save_on_top = True
+    list_display_links = ("event",)
+    list_select_related = True
+    list_max_show_all = 100
+    readonly_fields = ("created_at",)
+    date_hierarchy = "created_at"
+    ordering = ("-created_at",)

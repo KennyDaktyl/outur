@@ -16,7 +16,7 @@ class EventCreateView(CreateView):
     model = Event
     form_class = EventForm
     template_name = "cms/forms/event_create_form.html"
-    success_url = reverse_lazy("home:home")
+    success_url = reverse_lazy("events:events_list")
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
@@ -31,7 +31,7 @@ class EventUpdateView(UpdateView):
     model = Event
     form_class = EventForm
     template_name = "cms/forms/event_update_form.html"
-    success_url = reverse_lazy("home:home")
+    success_url = reverse_lazy("events:events_list")
     
     def get_initial(self):
         """Ustawienie początkowych wartości formularza."""

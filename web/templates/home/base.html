@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% csrf_token %}
+<div class="container mt-2 p-0 m-0">
+    <div class="d-flex flex-wrap justify-content-start align-items-start">
+        {% block side_bar %}
+        <!-- Lewa kolumna - Menu kategorii -->
+        <div class="d-none d-xl-flex col-xl-2">
+            {% if filter_form %}
+                {% include "events/includes/filters_event.html" %}
+            {% endif %}
+        </div>
+        {% endblock %}
+
+        <!-- Prawa kolumna - Lista wydarzeń i paginacja -->
+        <div class="col-12 col-xl-10 d-flex justify-content-start align-items-start flex-wrap p-0 m-0 mx-auto ps-xl-2">
+            {% block home_main %}
+            {% endblock %}
+
+            {% block pagination %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+<div id="loading-spinner" class="text-center my-4" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Ładowanie...</span>
+    </div>
+</div>
+    {% block home_js %}
+    {% endblock %}
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/main.js' %}"></script>
+{% endblock %}
+

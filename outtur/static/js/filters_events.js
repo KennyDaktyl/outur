@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
         showSpinner();
     
-        fetch(`/events/ajax/filter-events/?${params}`, {
+        fetch(`/wydarzenia/ajax/filter-events/?${params}`, {
             method: "GET",
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
@@ -66,6 +66,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     paginationContainer.innerHTML = data.pagination; 
                     initializePagination();
                 }
+                // Ponowne parsowanie elementów Facebooka
+                if (typeof FB !== 'undefined' && FB.XFBML) {
+                    FB.XFBML.parse();
+                }
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -74,6 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .finally(() => {
                 hideSpinner(); 
+            });
     };
 
     const handlePaginationClick = (event) => {

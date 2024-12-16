@@ -1,7 +1,13 @@
 import random
-
+from django.contrib.auth.views import LogoutView
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib import messages
 from django.views.generic.edit import FormView
 from django.http import JsonResponse
 
@@ -12,6 +18,7 @@ from web.utils import send_sms
 class LoginView(FormView):
     template_name = 'auth/login_form.html'
     form_class = LoginForm
+    success_url = reverse_lazy('events:events_list')
 
     def form_valid(self, form):
         username = form.cleaned_data['username']
@@ -21,12 +28,13 @@ class LoginView(FormView):
 
         if user is not None:
             login(self.request, user)
-            return JsonResponse({'message': 'Zalogowano pomyślnie.'})
+            return redirect(self.get_success_url())
         else:
             return JsonResponse({'message': 'Nieprawidłowe dane logowania.'})
 
     def form_invalid(self, form):
-        return JsonResponse({'errors': form.errors}, status=400)
+        messages.error(self.request, "Niepoprawny login lub hasło.")
+        return super().form_invalid(form)
     
     
 class UserRegistrationView(FormView):
@@ -55,3 +63,14 @@ class UserRegistrationView(FormView):
 
     def form_invalid(self, form):
         return JsonResponse({'errors': form.errors}, status=400)
+    
+
+class UserLogout(View):
+    def get(self, request):
+        logout(request)
+        messages.success(
+            request,
+            "Wylogowano użytkownika",
+        )
+        return redirect("events:events_list")
+    
