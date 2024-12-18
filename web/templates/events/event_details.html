@@ -14,8 +14,24 @@
         </div>
         <div class="col-xl-2 text-end">
             <div class="d-flex justify-content-end align-items-center">
-                <span class="me-2">146</span>
-                <i class="fa fa-heart text-danger" aria-hidden="true"></i>
+                <span id="likes-count-{{ event.id }}" class="me-2">{{ event.likes_count }}</span>
+                {% if user.is_authenticated %}
+                    <!-- Ikona do polubienia wydarzenia -->
+                    <i class="fa fa-heart{% if event.is_liked %} text-danger{% else %} text-dark{% endif %}" 
+                    data-event-id="{{ event.id }}" 
+                    style="cursor: pointer;"
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="top" 
+                    title="{% if event.is_liked %}Kliknij, aby usunąć polubienie{% else %}Kliknij, aby polubić{% endif %}"
+                    onclick="toggleLike(this)"></i>
+                {% else %}
+                    <!-- Ikona z chmurką informującą o konieczności zalogowania -->
+                    <i class="fa fa-heart text-dark" 
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="top" 
+                    title="Zaloguj się, aby polubić wydarzenie" 
+                    style="cursor: not-allowed;"></i>
+                {% endif %}
                 <div class="ms-3">
                     <div class="fb-share-button" 
                         data-href="{{ request.build_absolute_uri }}" 
@@ -47,8 +63,12 @@
         <div class="col-lg-12 d-flex flex-wrap">
             <p class="col-12">{{ event.address }}</p>
             <div class="col-xl-5 p-0 m-0 d-flex">
-                <strong>Dodane przez {{ event.get_added_by_display }}:&nbsp;</strong> 
-                <a href="#" class="text-dark text-decoration-underline">{{ event.created_by.username }}</a>
+                <strong>Dodane przez:&nbsp;{{ event.get_added_by_display }}:&nbsp;</strong> 
+                <a href="#" class="text-dark text-decoration-underline">
+                    {% if event.created_by.first_name %}
+                        {{ event.created_by.first_name }}{% else %}anominowy
+                    {% endif %}
+                </a>
             </div>
             <p class="col-xl-5 p-0 m-0">{{ event.date_info }}</p>
 
@@ -158,22 +178,6 @@
 {% endblock %}
 
 {% block js %}
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Inicjalizacja Bootstrap Tooltip
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-
-        // Obsługa przycisku do pokazywania formularza
-        const toggleFormButton = document.getElementById("toggle-form");
-        const form = document.getElementById("event-form");
-        if (toggleFormButton && form) {
-            toggleFormButton.addEventListener("click", () => {
-                form.style.display = form.style.display === "none" ? "block" : "none";
-            });
-        }
-    });
-</script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/event_details.js' %}"></script>
 {% endblock %}

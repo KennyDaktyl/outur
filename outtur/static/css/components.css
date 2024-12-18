@@ -119,3 +119,14 @@
     height: 100%;
     width: 100%;
 }
+
+#map-container {
+    height: 450px;
+    width: 100%;
+}
+
+@media (min-width: 1200px) {
+    #map-container {
+        height: 700px;
+    }
+}

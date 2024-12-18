@@ -30,6 +30,14 @@ class EventFilterForm(forms.Form):
         required=False
     )
     
+    def __init__(self, *args, **kwargs):
+        session_data = kwargs.pop('session_data', {})
+        super().__init__(*args, **kwargs)
+
+        for field_name, value in session_data.items():
+            if field_name in self.fields:
+                self.fields[field_name].initial = value
+    
 
 class AbuseReportForm(forms.Form):
     title = forms.CharField(

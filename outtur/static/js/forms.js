@@ -2,10 +2,10 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     // Pobierz pola formularza
-    const emailField = document.getElementById("email");
-    const phoneField = document.getElementById("phone_number");
-    const passwordField = document.getElementById("password");
-    const confirmPasswordField = document.getElementById("confirm_password");
+    const emailField = document.getElementById("id_username");
+    const phoneField = document.getElementById("id_phone_number");
+    const passwordField = document.getElementById("id_password");
+    const confirmPasswordField = document.getElementById("id_confirm_password");
 
     emailField.addEventListener("input", () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -52,14 +52,14 @@ document.addEventListener("DOMContentLoaded", () => {
     
 
     document.getElementById('toggle-password').addEventListener('click', function () {
-        const passwordInput = document.getElementById('password');
+        const passwordInput = document.getElementById('id_password');
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
         this.innerHTML = type === 'password' ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-solid fa-lock"></i>';
     });
     
     document.getElementById('toggle-confirm-password').addEventListener('click', function () {
-        const passwordInput = document.getElementById('confirm_password');
+        const passwordInput = document.getElementById('id_confirm_password');
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
         this.innerHTML = type === 'password' ? '<i class="fa-regular fa-eye"></i>' : '<i class="fa-solid fa-lock"></i>';

@@ -15,31 +15,76 @@
                 {% csrf_token %}
                 <div class="row g-3 mb-3">
                     <div class="col-xl-6">
-                        <label for="email" class="form-label">Twój email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Adres email" required>
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Twój email</label>
+                        <input type="email" class="form-control" id="{{ form.username.id_for_label }}"   name="{{ form.username.html_name }}" placeholder="Adres email" value="{{ form.username.value|default_if_none:'' }}" required>
                         <div class="invalid-feedback">Podaj poprawny adres email.</div>
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.username.errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="col-xl-6">
-                        <label for="phone_number" class="form-label">Numer telefonu</label>
-                        <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Numer telefonu" required>
+                        <label for="{{ form.phone_number.id_for_label }}" class="form-label">Numer telefonu</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="{{ form.phone_number.id_for_label }}"  
+                            name="{{ form.phone_number.html_name }}" 
+                            placeholder="Numer telefonu" 
+                            maxlength="{{ form.phone_number.field.max_length }}"
+                            value="{{ form.phone_number.value|default_if_none:'' }}"
+                            required>
                         <div class="invalid-feedback">Numer telefonu musi mieć dokładnie 9 cyfr.</div>
+                        {% if form.phone_number.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.phone_number.errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row g-3 mb-3">
                     <div class="col-xl-6">
-                        <label for="password" class="form-label">Hasło</label>
+                        <label for="{{ form.password.id_for_label }}" class="form-label">Hasło</label>
                         <div class="input-group has-validation">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Hasło" required>
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="{{ form.password.id_for_label }}" 
+                                name="{{ form.password.html_name }}" 
+                                value="{{ form.password.value|default_if_none:'' }}" 
+                                placeholder="Hasło" 
+                                value="{{ form.password.value|default_if_none:'' }}"
+                                required>
                             <button class="col-1 bg-white input-icon" type="button" id="toggle-password">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
                             <div class="invalid-feedback">Hasło musi mieć co najmniej 8 znaków.</div>
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.password.errors %}
+                                    <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="col-xl-6">
-                        <label for="confirm_password" class="form-label">Powtórz hasło</label>
+                        <label for="{{ form.confirm_password.id_for_label }}" class="form-label">Powtórz hasło</label>
                         <div class="input-group has-validation">
-                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Powtórz hasło" required>
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="{{ form.confirm_password.id_for_label }}" 
+                                name="{{ form.confirm_password.html_name }}" 
+                                value="{{ form.confirm_password.value|default_if_none:'' }}" 
+                                placeholder="Powtórz hasło" 
+                                value="{{ form.confirm_password.value|default_if_none:'' }}"
+                                required>
                             <button class="col-1 bg-white input-icon" type="button" id="toggle-confirm-password">
                                 <i class="fa-regular fa-eye"></i>
                             </button>

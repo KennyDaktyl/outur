@@ -15,10 +15,10 @@ def send_sms(number, text, client=False):
     payload = {
         'user': login,
         'pass': password_md5,
-        'number': number,
+        'number': f"48{number}",
         'text': text_message,
         'type': 'sms',  
-        'from': "OutTur.pl" 
+        'from': "Tordo.pl" 
     }
 
     response = requests.post(api_url, data=payload)

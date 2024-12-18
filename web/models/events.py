@@ -196,6 +196,11 @@ class Event(models.Model):
     def users_count(self):
         return self.participants.count()
     
+    
+    @property
+    def likes_count(self):
+        return self.likes.count()
+    
     @property
     def address(self):
         if self.apartment_number:
@@ -238,7 +243,18 @@ class EventMessage(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.event.name}"
-    
+ 
+
+class EventLike(models.Model):
+    event = models.ForeignKey(Event, related_name="likes", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="event_likes", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('event', 'user')
+        verbose_name = "Polubienie"
+        verbose_name_plural = "Polubienia"
+           
 
 class EventParticipant(models.Model):
     event = models.ForeignKey(Event, related_name="participants", on_delete=models.CASCADE)
@@ -248,3 +264,4 @@ class EventParticipant(models.Model):
     class Meta:
         unique_together = ('event', 'user')
         verbose_name = "Uczestnik"
+        verbose_name_plural = "Uczestnicy"

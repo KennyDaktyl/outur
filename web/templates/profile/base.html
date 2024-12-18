@@ -1,0 +1,25 @@
+{% extends "home/base.html" %}
+
+
+{% block side_bar %}
+<!-- Lewa kolumna - Menu kategorii -->
+<div class="d-none d-xl-flex col-xl-2">
+    <div class="d-xl-flex col-12 justify-content-start align-items-start flex-column border-end p-0 m-0 bg-white">
+        <a href="{% url 'profile:update_profile' %}" class="col-12 p-2">
+            <span class="text-dark {% if request.resolver_match.url_name == 'update_profile' %}fw-bolder{% endif %}">Moje konto</span>
+        </a>
+        <a href="{% url 'profile:user_event_messages' %}" class="col-12 p-2">
+            <span class="text-dark {% if request.resolver_match.url_name == 'user_event_messages' %}fw-bolder{% endif %}">Wiadomości</span>
+        </a>
+        <a href="{% url 'profile:user_events_joined' %}" class="col-12 p-2">
+            <span class="text-dark {% if request.resolver_match.url_name == 'user_events_joined' %}fw-bolder{% endif %}">Wydarzenia w których uczestniczę</span>
+        </a>
+        <a href="{% url 'profile:user_events' %}" class="col-12 p-2">
+            <span class="text-dark {% if request.resolver_match.url_name == 'user_events' %}fw-bolder{% endif %}">Wydarzenia dodane</span>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block home_main %}
+{% endblock %}

@@ -13,6 +13,13 @@ else:
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
+
+if os.environ.get('ENVIRONMENT') in ['production',]:
+    DOMAIN_URL = "https://outtur.pl"
+else:
+    DOMAIN_URL = "http://127.0.0.1:8000"
+
+    
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -96,3 +103,15 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+EMAIL_PORT = os.environ.get("EMAIL_PORT")
+SERVER_EMAIL = os.environ.get("EMAIL_HOST")
+DEFAULT_FROM_EMAIL = os.environ.get("EMAIL_USER")
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+if os.environ.get('ENVIRONMENT') in ['production', 'staging', 'staging-test-prod', 'dev']:
+    EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', '').lower() == 'true'
+    EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', '').lower() == 'true'

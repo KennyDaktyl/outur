@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-0 m-0">
+    <div class="col-12 mt-5">
+        <div class="form-container bg-white p-4 rounded-20">
+            <h1 class="fs-4 text-left mb-4">Wprowadź dane aktywacji</h1>
+            <form method="post" id="registration-form d-flex ">
+                {% csrf_token %}
+                <div class="row g-3 mb-3">
+                    <div class="col-xl-6 mx-auto">
+                        <label for="{{ form.verification_code.id_for_label }}" class="form-label">Twój kod</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="{{ form.verification_code.id_for_label }}" 
+                            name="{{ form.verification_code.html_name }}" 
+                            placeholder="Podaj kod z SMS-a" 
+                            maxlength="{{ form.verification_code.field.max_length }}"
+                            required>
+                        {% if form.verification_code.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.verification_code.errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-12 mt-3 d-flex justify-content-center align-items-middle">
+                    <button type="submit" class="btn btn-success col-6 mx-auto rounded-20">Aktywuj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/forms.js' %}"></script>
+{% endblock %}

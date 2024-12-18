@@ -1,12 +1,12 @@
-<form class="{{ form_classes }}" method="get" action="">
+<form class="{{ form_classes }}" method="get" action="{{ form_action }}">
     <!-- Pole wyszukiwania -->
     <input 
         type="text" 
-        name="query" 
+        name="search" 
         class="form-control {{ input_classes }}" 
         placeholder="Szukaj wydarzenia" 
         aria-label="Szukaj wydarzenia"
-        value="{{ request.GET.query|default_if_none:'' }}"
+        value="{{ request.GET.search|default_if_none:'' }}"
     >
 
     <!-- Select do sortowania -->

@@ -1,13 +1,14 @@
 from django.urls import path
 
 from web.events.views import EventDetails, EventMapView, EventsMapView, EventsView
-from .views_ajax import add_user_to_event, ajax_filter_events, ajax_filter_events_map
+from .views_ajax import add_user_to_event, ajax_filter_events, ajax_filter_events_map, add_like_event
 
 app_name = "events"
 
 
 urlpatterns = [
-   path('add_user_to_event/<int:event_id>/', add_user_to_event, name='add_user_to_event'),
+   path('add-user-to-event/<int:event_id>/', add_user_to_event, name='add_user_to_event'),
+   path('add-like-event/<int:event_id>/', add_like_event, name='add_like_event'),
    path('ajax/filter-events/', ajax_filter_events, name='ajax_filter_events'),
    path('ajax/filter-events-map/', ajax_filter_events_map, name='ajax_filter_events_map'),
    

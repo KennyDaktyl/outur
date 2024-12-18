@@ -1,6 +1,7 @@
 from django.contrib import admin
+from web.models.accounts import ActivateToken, Profile
 from web.models.categories import Category
-from web.models.events import Event, EventMessage, EventParticipant
+from web.models.events import Event, EventMessage, EventParticipant, EventLike
 
 from django.contrib.admin import ModelAdmin
 from django.contrib.gis.db import models
@@ -67,6 +68,17 @@ class EventParticipantAdmin(admin.ModelAdmin):
     list_display = ("event", "user")
     
 
+@admin.register(EventLike)
+class EventLikeAdmin(admin.ModelAdmin):
+    list_display = ("event", "user")
+    list_filter = ("event", "user")
+    list_per_page = 20
+    save_on_top = True
+    list_display_links = ("event",)
+    list_select_related = True
+    list_max_show_all = 100
+    
+    
 @admin.register(EventMessage)
 class EventMessageAdmin(admin.ModelAdmin):
     list_display = ("event", "user", "created_at")
@@ -80,3 +92,22 @@ class EventMessageAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
     date_hierarchy = "created_at"
     ordering = ("-created_at",)
+    
+    
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ("user", "phone_number")
+    search_fields = ("user__username", "phone_number")
+    list_per_page = 20
+    save_on_top = True
+    list_display_links = ("user",)
+    list_select_related = True
+    list_max_show_all = 100
+
+
+@admin.register(ActivateToken)
+class ActivateTokenAdmin(admin.ModelAdmin):
+    list_display = [f.name for f in ActivateToken._meta.fields]
+    search_fields = ("id", "user__username")
+    list_filter = ["is_used"]
+    

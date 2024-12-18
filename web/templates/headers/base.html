@@ -35,11 +35,22 @@
                 Menu
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item fw-bold" href="{% url 'cms:create_event' %}">Dodaj wydarznie</a></li>
-                <li><a class="dropdown-item" href="#">Moje konto</a></li>
-                <li><a class="dropdown-item" href="{% url 'profile:user_event_messages' %}">Wiadomości</a></li>
-                <li><a class="dropdown-item" href="{% url 'profile:user_events_joined' %}">Wydarzenia w których uczestniczę</a></li>
-                <li><a class="dropdown-item mb-5" href="{% url 'profile:user_events' %}">Wydarzenia dodane</a></li>
+                <li>
+                    <a class="dropdown-item fw-bold" href="{% url 'cms:create_event' %}">Dodaj wydarznie</a>
+                </li>
+                
+                <li>
+                    <a href="{% url 'profile:update_profile' %}" class="dropdown-item text-dark mt-2 {% if request.resolver_match.url_name == 'update_profile' %}fw-bolder{% endif %}">Moje konto</a>
+                </li>
+                <li>
+                    <a class="dropdown-item text-dark mt-2 {% if request.resolver_match.url_name == 'user_event_messages' %}fw-bolder{% endif %}" href="{% url 'profile:user_event_messages' %}">Wiadomości</a>
+                </li>
+                <li>
+                    <a class="dropdown-item text-dark mt-2 {% if request.resolver_match.url_name == 'user_events_joined' %}fw-bolder{% endif %}" href="{% url 'profile:user_events_joined' %}">Wydarzenia w których uczestniczę</a>
+                </li>
+                <li>
+                    <a class="dropdown-item text-dark mt-2 {% if request.resolver_match.url_name == 'user_events' %}fw-bolder{% endif %}" href="{% url 'profile:user_events' %}">Wydarzenia dodane</a>
+                </li>
                 <li><a class="dropdown-item mt-5" href="#">Zapomnij o mnie</a></li>
                 <li><a class="dropdown-item" href="{% url 'auth:logout' %}">Wyloguj</a></li>
             </ul>
@@ -61,10 +72,17 @@
     <!-- Mobile menu -->
     <div id="mobileMenu" class="collapse w-100 d-xl-none mb-2">
         <ul class="list-group">
-            <li class="list-group-item"><a href="#" class="dropdown-item">Moje konto</a></li>
-            <li class="list-group-item"><a href="#" class="dropdown-item">Wiadomości</a></li>
-            <li class="list-group-item"><a href="#" class="dropdown-item">Wydarzenia w których uczestniczę</a></li>
-            <li class="list-group-item mb-5"><a href="{% url 'profile:user_events' %}" class="dropdown-item">Wydarzenia dodane</a></li>
+            <li class="list-group-item p-2">
+                <a href="{% url 'profile:update_profile' %}" class="text-dark p-3 mt-2 mb-2 {% if request.resolver_match.url_name == 'update_profile' %}fw-bolder{% endif %}">Moje konto</a>
+            </li>
+            <li class="list-group-item p-2">
+                <a href="{% url 'profile:user_event_messages' %}" class="text-dark p-3 mt-2 mb-2 {% if request.resolver_match.url_name == 'user_event_messages' %}fw-bolder{% endif %}">Wiadomości</a>
+            </li>
+            <li class="list-group-item p-2">
+                <a href="{% url 'profile:user_events_joined' %}" class="text-dark p-3 mt-2 mb-2 {% if request.resolver_match.url_name == 'user_events_joined' %}fw-bolder{% endif %}">Wydarzenia w których uczestniczę</a>
+            </li>
+            <li class="list-group-item mb-5 p-2">
+                <a href="{% url 'profile:user_events' %}" class="text-dark p-3 mt-2 mb-2 {% if request.resolver_match.url_name == 'user_events' %}fw-bolder{% endif %}">Wydarzenia dodane</a></li>
             <li class="list-group-item mt-5"><a href="#" class="dropdown-item">Zapomnij o mnie</a></li>
             <li class="list-group-item">
                 {% if request.user.is_authenticated %}

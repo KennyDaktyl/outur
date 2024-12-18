@@ -5,8 +5,9 @@ from django.views.generic.detail import DetailView
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.template.loader import render_to_string
-from django.views.generic import TemplateView
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.urls import reverse
+from django.db.models import Q, Count
 
 from bs4 import BeautifulSoup
 
@@ -14,13 +15,30 @@ from web.events.forms import AbuseReportForm, EventFilterForm
 from web.models.events import Event
 
 
-
 class EventsView(ListView):
-    template_name = 'home/home.html'
+    template_name = 'events/events_listing_list.html'
     paginate_by = 20
     
     def get_queryset(self):
-        return Event.objects.all()
+        queryset = Event.objects.all().annotate(
+            participants_count=Count('participants')
+        )
+        search_query = self.request.GET.get('search', '').strip()
+        sort_option = self.request.GET.get('sort', 'newest')
+
+        if search_query:
+            queryset = queryset.filter(Q(name__icontains=search_query))
+
+        if sort_option == 'newest':
+            queryset = queryset.order_by('-created_at', 'name') 
+        elif sort_option == 'popularity':
+            queryset = queryset.order_by('-popularity', '-created_at')
+        elif sort_option == 'participants':
+            queryset = queryset.order_by('-participants_count', '-created_at')
+        elif sort_option == 'nearest':
+            pass
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -36,7 +54,10 @@ class EventsView(ListView):
         except EmptyPage:
             page_obj = paginator.page(paginator.num_pages)
 
-        context['filter_form'] = EventFilterForm(self.request.GET or None)
+        session_data = self.request.session.get("event_filters", {})
+        
+        context['filter_form'] = EventFilterForm(self.request.GET or None, session_data=session_data)
+        context['form_action'] = reverse('events:events_list')
         context['search_form_on'] = True
         context['events'] = page_obj.object_list  
         context['page_obj'] = page_obj  
@@ -53,6 +74,14 @@ class EventDetails(DetailView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Szczegóły wydarzenia'
         context['form'] = AbuseReportForm()
+        
+        event = self.object
+        user = self.request.user
+        if user.is_authenticated:
+            event.is_liked = event.likes.filter(user=user).exists()
+        else:
+            event.is_liked = False
+        context['event'] = event
         return context
     
     
@@ -78,17 +107,25 @@ class EventMapView(TemplateView):
             tooltip="Kliknij, aby zobaczyć szczegóły"
         ).add_to(folium_map)
 
-        context['map_html'] = folium_map._repr_html_()
         context['event'] = event
+        
+        map_html = folium_map._repr_html_()
+        context['map_html'] = map_html.replace(
+        'style="position:relative;width:100%;height:0;padding-bottom:60%;"',
+        'style="position:relative;" id="map-container"'
+        )
+        
         return context
 
 
 class EventsMapView(TemplateView):
-    template_name = "events/includes/events_listing_map.html"
+    template_name = "events/events_listing_map.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_form'] = EventFilterForm(self.request.GET or None)
+
+        session_data = self.request.session.get("event_filters", {})
+        context['filter_form'] = EventFilterForm(self.request.GET or None, session_data=session_data)
         context['search_form_on'] = True
 
         events = Event.objects.all()
@@ -119,7 +156,7 @@ class EventsMapView(TemplateView):
 
         map_html_cleaned = str(soup)
         context['map_html'] = map_html_cleaned.replace(
-            'style="position:relative;width:100%;height:0;padding-bottom:60%;"',
-            'style="position:relative;width:100%;height: 600px;"'
+        'style="position:relative;width:100%;height:0;padding-bottom:60%;"',
+        'style="position:relative;" id="map-container"'
         )
         return context

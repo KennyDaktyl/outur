@@ -2,15 +2,48 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.urls import reverse_lazy
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 
 from web.events.forms import MessageForm
 from web.models.events import Event, EventMessage, EventParticipant
+from web.profile.forms import ProfileForm
+
+from django.contrib.auth.models import User
 
 
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = ProfileForm
+    template_name = "profile/forms/profile_update_form.html"
+    success_url = reverse_lazy("profile:update_profile")
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["phone_number"] = self.request.user.profile.phone_number
+        return initial
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        phone_number = form.cleaned_data.get("phone_number")
+        profile = self.request.user.profile
+        profile.phone_number = phone_number
+        profile.save()
+
+        messages.success(self.request, "Profil został zaktualizowany.")
+        return response
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+    
+    
 @method_decorator(login_required, name='dispatch')
 class UserEventsCreated(ListView):
     model = Event

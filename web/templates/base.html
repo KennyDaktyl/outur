@@ -26,6 +26,19 @@
     {% endblock %}
 </head>
 <body>
+    {% block message %}
+        {% if messages %}
+            <div id="message_django" class="fixed-top w-100 d-flex justify-content-center align-items-center">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center col-10 col-xl-4 mx-auto" role="alert">
+                        <span>{{ message|safe }}</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endblock %}
+
     <header>
         <!-- Blok na nagłówki -->
         {% block header %}
@@ -43,12 +56,41 @@
     <footer>
         <!-- Blok na stopkę -->
         {% block footer %}
-       
+        <div class="container-fluid border-top border-2 border-dark mt-5">
+            <div class="row container mx-auto d-flex align-items-start">
+                <div class="col-6 col-xl-2 d-flex align-items-center">
+                    <a href="{% url 'events:events_list' %}" class="text-decoration-none">
+                        <p class="logo text-danger p-0 m-0 fs-2 fw-bold">Outtur</p>
+                    </a>
+                </div>
+                <div class="col-6 col-xl-10 d-flex flex-wrap justify-content-center align-items-center">
+                    <a href="" class="mt-2 text-dark col-12">Regulamin serwisu</a>
+                    <a href="" class="mt-2 text-dark col-12">Polityka prywatności (RODO)</a>
+                    <a href="" class="mt-2 text-dark col-12">Załóż konto</a>
+                    <a href="" class="mt-2 text-dark col-12">Kontakt</a>
+                </div>
+            </div>
+        </div>
         {% endblock %}
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('#message_django .alert');
     
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                    
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 150);
+                }, 1200);
+            });
+        });
+    </script>
     <!-- Blok na skrypty JavaScript -->
     {% block js %}
         <script src="{% static 'js/main.js' %}"></script>

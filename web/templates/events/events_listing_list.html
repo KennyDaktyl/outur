@@ -5,8 +5,7 @@
 {% block home_main %}
 <!-- Lista wydarzeń -->
 <div class="event_listing col-12 d-flex justify-content-start align-items-start flex-wrap">
-    <a class="col-12" href="{% url 'events:events_list' %}">Lista wydarzeń</a>
-    <a class="col-12" href="{% url 'events:events_map' %}">Mapa wydarzeń</a>
+    {% include "events/includes/event_listing.html" %}
 </div>
 {% endblock %}
 

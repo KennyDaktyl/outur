@@ -1,7 +1,7 @@
 function addUserToEvent(element) {
     const eventId = element.dataset.eventId;
 
-    fetch(`/events/add_user_to_event/${eventId}/`, {
+    fetch(`/wydarzenia/add-user-to-event/${eventId}/`, {
         method: "POST",
         headers: {
             "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
