@@ -9,7 +9,11 @@ DEBUG = os.environ.get('DEBUG', False)
 if os.environ.get('DEBUG') == 'True':
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = [
+        "vps-a823fb64.vps.ovh.net",
+        "outtur.com",
+        "57.128.200.200",
+]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
