@@ -12,6 +12,7 @@ else:
     ALLOWED_HOSTS = [
         "vps-a823fb64.vps.ovh.net",
         "outtur.com",
+        "www.outtur.com",
         "57.128.200.200",
 ]
 
