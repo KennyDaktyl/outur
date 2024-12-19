@@ -1,9 +1,13 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.gis.db.models import PointField
+from django.dispatch import receiver
 from multiselectfield import MultiSelectField
+from django.utils.text import slugify
 
-from web.constans import ADDED_BY_CHOICES, DAYS_OF_WEEK, ENTRY_CHOICES, EVENT_TYPE_CHOICES, LOCATION_CHOICES  
+from web.constans import ADDED_BY_CHOICES, DAYS_OF_WEEK, ENTRY_CHOICES, EVENT_TYPE_CHOICES, LOCATION_CHOICES
+from web.models.images import delete_thumbnails, make_thumbnail  
 
 
 class Event(models.Model):
@@ -12,6 +16,13 @@ class Event(models.Model):
         max_length=140, 
         verbose_name="Nazwa wydarzenia",
         db_index=True
+    )
+    slug = models.SlugField(
+        max_length=140, 
+        verbose_name="Nazwa SEO",
+        unique=True,
+        blank=True,
+        null=True
     )
     short_description = models.TextField(
         max_length=840, 
@@ -174,7 +185,8 @@ class Event(models.Model):
         auto_now=True, 
         verbose_name="Data ostatniej aktualizacji"
     )
-
+    thumbnails_cache = models.JSONField(default=dict, null=True, blank=True)
+    
     class Meta:
         verbose_name = "Wydarzenie"
         verbose_name_plural = "Wydarzenia"
@@ -184,6 +196,126 @@ class Event(models.Model):
             models.Index(fields=["created_at"], name="idx_event_created_at")
         ]
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name.replace("ł", "l"))
+        
+        old_main_image = self.__get_main_image()
+        old_gallery_image_1 = self.__get_gallery_image_1()
+        old_gallery_image_2 = self.__get_gallery_image_2()
+        old_gallery_image_3 = self.__get_gallery_image_3()
+        
+        super(Event, self).save()
+        
+        if self.main_image != old_main_image:
+            delete_thumbnails(self, self, 1, "event_id", "main_image")
+            
+            if self.main_image:
+                self.thumbnails_cache["main_image"] = make_thumbnail(
+                    self.main_image,
+                    [(350, 260), (700, 520)],
+                    1,
+                    self,
+                    "Event",
+                )
+            else:
+                self.thumbnails_cache["main_image"] = {}
+        
+        if self.gallery_image_1 != old_gallery_image_1:
+            delete_thumbnails(self, self, 2, "event_id", "gallery_image_1")
+            
+            if self.gallery_image_1:
+                self.thumbnails_cache["gallery_image_1"] = make_thumbnail(
+                    self.gallery_image_1,
+                    [(350, 260), (700, 520)],
+                    2,
+                    self,
+                    "Event",
+                )
+            else:
+                self.thumbnails_cache["gallery_image_1"] = {}
+        
+        if self.gallery_image_2 != old_gallery_image_2:
+            delete_thumbnails(self, self, 2, "event_id", "gallery_image_2")
+            
+            if self.gallery_image_2:
+                self.thumbnails_cache["gallery_image_2"] = make_thumbnail(
+                    self.gallery_image_1,
+                    [(350, 260), (700, 520)],
+                    2,
+                    self,
+                    "Event",
+                )
+            else:
+                self.thumbnails_cache["gallery_image_2"] = {}
+        
+        if self.gallery_image_3 != old_gallery_image_3:
+            delete_thumbnails(self, self, 3, "event_id", "gallery_image_3")
+            
+            if self.gallery_image_3:
+                self.thumbnails_cache["gallery_image_3"] = make_thumbnail(
+                    self.gallery_image_3,
+                    [(350, 260), (700, 520)],
+                    3,
+                    self,
+                    "Event",
+                )
+            else:
+                self.thumbnails_cache["gallery_image_3"] = {}
+        
+        old_gallery_image_4 = self.__get_gallery_image_4()
+        if self.gallery_image_4 != old_gallery_image_4:
+            delete_thumbnails(self, self, 4, "event_id", "gallery_image_4")
+            
+            if self.gallery_image_4:
+                self.thumbnails_cache["gallery_image_4"] = make_thumbnail(
+                    self.gallery_image_4,
+                    [(350, 260), (700, 520)],
+                    4,
+                    self,
+                    "Event",
+                )
+            else:
+                self.thumbnails_cache["gallery_image_4"] = {}
+                
+        super(Event, self).save()
+        
+    
+    def __get_main_image(self):
+        try:
+            event = Event.objects.get(pk=self.pk)
+            return event.main_image
+        except Event.DoesNotExist:
+            return None
+    
+    def __get_gallery_image_1(self):
+        try:
+            event = Event.objects.get(pk=self.pk)
+            return event.gallery_image_1
+        except Event.DoesNotExist:
+            return None
+    
+    def __get_gallery_image_2(self):
+        try:
+            event = Event.objects.get(pk=self.pk)
+            return event.gallery_image_2
+        except Event.DoesNotExist:
+            return None
+    
+    def __get_gallery_image_3(self):
+        try:
+            event = Event.objects.get(pk=self.pk)
+            return event.gallery_image_3
+        except Event.DoesNotExist:
+            return None
+    
+    def __get_gallery_image_4(self):
+        try:
+            event = Event.objects.get(pk=self.pk)
+            return event.gallery_image_4
+        except Event.DoesNotExist:
+            return None
+    
     def __str__(self):
         return self.name
 
@@ -196,10 +328,6 @@ class Event(models.Model):
     def users_count(self):
         return self.participants.count()
     
-    
-    @property
-    def likes_count(self):
-        return self.likes.count()
     
     @property
     def address(self):
@@ -229,6 +357,13 @@ class Event(models.Model):
             gallery.append(self.gallery_image_4)
         return gallery
 
+    
+    @property
+    def formatted_one_day_date(self):
+        if self.one_day_date:
+            return self.one_day_date.strftime('%Y-%m-%d %H:%M')
+        return ""
+    
 
 class EventMessage(models.Model):
     event = models.ForeignKey(Event, related_name="messages", on_delete=models.CASCADE, db_index=True)
@@ -265,3 +400,81 @@ class EventParticipant(models.Model):
         unique_together = ('event', 'user')
         verbose_name = "Uczestnik"
         verbose_name_plural = "Uczestnicy"
+        
+
+@receiver(models.signals.post_delete, sender=Event)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.main_image:
+        if os.path.isfile(instance.main_image.path):
+            os.remove(instance.main_image.path)
+    if instance.gallery_image_1:
+        if os.path.isfile(instance.gallery_image_1.path):
+            os.remove(instance.gallery_image_1.path)
+    if instance.gallery_image_2:
+        if os.path.isfile(instance.gallery_image_2.path):
+            os.remove(instance.gallery_image_2.path)
+    if instance.gallery_image_3:
+        if os.path.isfile(instance.gallery_image_3.path):
+            os.remove(instance.gallery_image_3.path)
+    if instance.gallery_image_4:
+        if os.path.isfile(instance.gallery_image_4.path):
+            os.remove(instance.gallery_image_4.path)
+
+
+@receiver(models.signals.pre_save, sender=Event)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = Event.objects.get(pk=instance.pk).main_image
+        new_file = instance.main_image
+        if old_file and not old_file == new_file:
+            if os.path.isfile(old_file.path):
+                os.remove(old_file.path)
+    except Event.DoesNotExist:
+        return False
+
+    try:
+        old_file = Event.objects.get(
+            pk=instance.pk
+        ).gallery_image_1
+        new_file = instance.gallery_image_1
+        if old_file and not old_file == new_file:
+            if os.path.isfile(old_file.path):
+                os.remove(old_file.path)
+
+    except Event.DoesNotExist:
+        return False
+
+    try:
+        old_file = Event.objects.get(
+            pk=instance.pk
+        ).gallery_image_2
+        new_file = instance.gallery_image_2
+        if old_file and not old_file == new_file:
+            if os.path.isfile(old_file.path):
+                os.remove(old_file.path)
+
+    except Event.DoesNotExist:
+        return False
+
+    try:
+        old_file = Event.objects.get(pk=instance.pk).gallery_image_3
+        new_file = instance.gallery_image_3
+        if old_file and not old_file == new_file:
+            if os.path.isfile(old_file.path):
+                os.remove(old_file.path)
+
+    except Event.DoesNotExist:
+        return False
+    
+    try:
+        old_file = Event.objects.get(pk=instance.pk).gallery_image_4
+        new_file = instance.gallery_image_4
+        if old_file and not old_file == new_file:
+            if os.path.isfile(old_file.path):
+                os.remove(old_file.path)
+
+    except Event.DoesNotExist:
+        return False

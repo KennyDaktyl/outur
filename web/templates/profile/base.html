@@ -1,5 +1,6 @@
 {% extends "home/base.html" %}
 
+{% load static %}
 
 {% block side_bar %}
 <!-- Lewa kolumna - Menu kategorii -->
@@ -22,4 +23,8 @@
 {% endblock %}
 
 {% block home_main %}
+{% endblock %}
+
+{% block home_js %}
+    <script src="{% static 'js/events.js' %}"></script>
 {% endblock %}

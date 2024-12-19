@@ -17,7 +17,7 @@
 <div class="container mx-auto p-0 m-0">
     <div class="col-12 mt-2">
         <div class="form-container bg-white p-4 rounded-20">
-            <h1 class="fs-4 text-left mb-4">Dodaj nowe wydarzenie</h1>
+            <h1 class="fs-4 text-left mb-4">Formularz wydarzenia</h1>
             <form method="post" enctype="multipart/form-data" id="event-form">
                 {% csrf_token %}
                 
@@ -55,7 +55,7 @@
                                 maxlength="{{ form.short_description.field.max_length }}" 
                                 rows="3" 
                                 {% if form.short_description.field.required %}required{% endif %}>{{ form.short_description.value|default_if_none:'' }}</textarea>
-                        {% if form.short_description.errors %}
+                            {% if form.short_description.errors %}
                             <div class="invalid-feedback d-block">
                                 {% for error in form.short_description.errors %}
                                 <p>{{ error }}</p>
@@ -79,13 +79,6 @@
                             value="{{ form.city.value|default_if_none:'' }}" 
                             placeholder="{{ form.city.field.widget.attrs.placeholder|default:'Podaj miasto' }}" 
                             {% if form.city.field.required %}required{% endif %}>
-                        {% if form.city.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.city.errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </div>
 
                     <!-- Ulica -->
@@ -100,13 +93,6 @@
                             value="{{ form.street.value|default_if_none:'' }}" 
                             placeholder="{{ form.street.field.widget.attrs.placeholder|default:'Podaj ulicę' }}" 
                             {% if form.street.field.required %}required{% endif %}>
-                        {% if form.street.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.street.errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </div>
                 </div>
 
@@ -123,13 +109,6 @@
                             value="{{ form.house_number.value|default_if_none:'' }}" 
                             placeholder="{{ form.house_number.field.widget.attrs.placeholder|default:'Np. 12' }}" 
                             {% if form.house_number.field.required %}required{% endif %}>
-                        {% if form.house_number.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.house_number.errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </div>
 
                     <!-- Numer mieszkania -->
@@ -144,13 +123,6 @@
                             value="{{ form.apartment_number.value|default_if_none:'' }}" 
                             placeholder="{{ form.apartment_number.field.widget.attrs.placeholder|default:'Np. 3' }}" 
                             maxlength="{{ form.apartment_number.field.max_length|default:5 }}">
-                        {% if form.apartment_number.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.apartment_number.errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </div>
                 </div>
 
@@ -179,9 +151,9 @@
                         <label class="form-label col-12 fw-bold">Mapa lokalizacji</label>
                         <p class="text-muted">Kliknij na mapie, aby ustawić lokalizację wydarzenia lub wypełnij adres w formularzu.</p>
                         <div id="map" style="height: 300px; border: 1px solid #ccc;"></div>
-                        <input type="hidden" id="latitude" name="latitude">
-                        <input type="hidden" id="longitude" name="longitude">
-                        <input type="hidden" id="{{ form.location.id_for_label }}" name="{{ form.location.html_name }}" value={{ form.location.value }} >
+                        <input type="hidden" id="latitude" name="latitude" value="{{ form.latitude.value|default_if_none:'' }}">
+                        <input type="hidden" id="longitude" name="longitude" value="{{ form.longitude.value|default_if_none:'' }}">
+                        <input type="hidden" id="{{ form.location.id_for_label }}" name="{{ form.location.html_name }}" value="{{ form.location.value|default_if_none:'' }}">
                     </div>
                 </div>
 
@@ -197,13 +169,6 @@
                             style="min-height: 200px;" 
                             required
                         >{{ form.description.value|default_if_none:"" }}</textarea>
-                        {% if form.description.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.description.errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </div>
                 </div>
 
@@ -217,13 +182,6 @@
                             class="form-control"
                             accept="image/*"
                             {% if form.main_image.field.required %}required{% endif %}>
-                        {% if form.main_image.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.main_image.errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </div>
                 
                     <!-- Podgląd zdjęcia -->
@@ -278,13 +236,6 @@
                                      class="img-thumbnail" style="max-width: 100%; max-height: 200px; display: none;">
                             {% endif %}
                         </div>
-                        {% if form.gallery_image_1.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.gallery_image_1.errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </div>
                 
                     <!-- Zdjęcie nr 2 -->
@@ -300,13 +251,6 @@
                                      class="img-thumbnail" style="max-width: 100%; max-height: 200px; display: none;">
                             {% endif %}
                         </div>
-                        {% if form.gallery_image_2.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.gallery_image_2.errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </div>
                 
                     <!-- Zdjęcie nr 3 -->
@@ -322,13 +266,6 @@
                                      class="img-thumbnail" style="max-width: 100%; max-height: 200px; display: none;">
                             {% endif %}
                         </div>
-                        {% if form.gallery_image_3.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.gallery_image_3.errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </div>
                 
                     <!-- Zdjęcie nr 4 -->
@@ -344,13 +281,6 @@
                                      class="img-thumbnail" style="max-width: 100%; max-height: 200px; display: none;">
                             {% endif %}
                         </div>
-                        {% if form.gallery_image_4.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.gallery_image_4.errors %}
-                                <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </div>
                 </div>
                     
@@ -393,7 +323,7 @@
                                     name="{{ form.one_day_date.html_name }}" 
                                     class="form-control" 
                                     placeholder="Wybierz datę" 
-                                    value="{{ form.one_day_date.value|default_if_none:'' }}"
+                                    value="{{ form.one_day_date.value|default_if_none:'' }}" 
                                     required>
                                 <span class="input-group-text">
                                     <i class="bi bi-calendar"></i>
@@ -408,7 +338,7 @@
                             {% endif %}
                         </div>
                     </div>
-                
+                    
                     <!-- Sekcja dla wydarzeń kilkudniowych -->
                     <div id="multi-day-section" class="row g-3 mb-3 d-none justify-content-between">
                         <div class="col-12 col-xl-4 px-0">
@@ -472,7 +402,7 @@
                                             value="{{ value }}" 
                                             id="day_{{ value }}"
                                             {% if value in form.day_of_week.value %}checked{% endif %}
-                                        >
+                                            >
                                         <label class="form-check-label" for="day_{{ value }}">{{ name }}</label>
                                     </div>
                                 </div>
@@ -647,17 +577,9 @@
                     </div>
                 </div>
                 
-                <!-- Zgody -->
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" id="terms" required>
-                    <label class="form-check-label" for="terms">
-                        <small>Potwierdzam, że zapoznałem się i akceptuję <a href="#">regulamin</a> serwisu internetowego.</small>
-                    </label>
-                </div>
-
                 <!-- Przyciski -->
                 <div class="col-12 mt-3 d-flex justify-content-center align-items-middle">
-                    <button type="submit" class="btn search-button text-white col-10 col-xl-6 mx-auto rounded-20">Dodaj wydarzenie</button>
+                    <button type="submit" class="btn search-button text-white col-10 col-xl-6 mx-auto rounded-20">Zapisz wydarzenie</button>
                 </div>
             </form>
         </div>

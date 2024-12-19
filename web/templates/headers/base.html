@@ -26,10 +26,10 @@
     <div class="d-none col-xl-3 d-xl-flex justify-content-end align-items-center">
         <div class="dropdown me-2">
             {% if request.resolver_match.url_name == 'events_map' %}
-                <a href="{% url 'events:events_list' %}" class="btn btn-light rounded-20">Lista</a>
+                <a href="{% url 'events:events_list' %}?{{ request.GET.urlencode }}" class="btn btn-light rounded-20">Lista</a>
             {% endif %}
             {% if request.resolver_match.url_name == 'events_list' %}
-                <a href="{% url 'events:events_map' %}" class="btn btn-light rounded-20">Mapa</a>
+                <a href="{% url 'events:events_map' %}?{{ request.GET.urlencode }}" class="btn btn-light rounded-20">Mapa</a>
             {% endif %}
             <button class="btn btn-primary dropdown-toggle rounded-20" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                 Menu
@@ -112,10 +112,10 @@
             Filtry
         </button>
         {% if request.resolver_match.url_name == 'events_map' %}
-                <a href="{% url 'events:events_list' %}" class="btn btn-light rounded-20">Lista</a>
+                <a href="{% url 'events:events_list' %}?{{ request.GET.urlencode }}" class="btn btn-light rounded-20">Lista</a>
         {% endif %}
         {% if request.resolver_match.url_name == 'events_list' %}
-            <a href="{% url 'events:events_map' %}" class="btn btn-light rounded-20">Mapa</a>
+            <a href="{% url 'events:events_map' %}?{{ request.GET.urlencode }}" class="btn btn-light rounded-20">Mapa</a>
         {% endif %}
     </div>
 

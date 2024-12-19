@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.loader import render_to_string
-from web.events.filters import filter_events
+from web.events.filters import filter_events, sorted_events_ajax
 from web.models.events import Event, EventLike, EventParticipant
 
 
@@ -53,7 +53,9 @@ def add_like_event(request, event_id):
 
 def ajax_filter_events(request):
     if request.method == "GET":
-        events, filter_form = filter_events(request)
+        events, _ = filter_events(request)
+        events = sorted_events_ajax(events, request)
+    
         page = request.GET.get("page", 1)
 
         paginator = Paginator(events, 20)
@@ -79,7 +81,8 @@ def ajax_filter_events(request):
 
 def ajax_filter_events_map(request):
     if request.method == "GET":
-        events, filter_form = filter_events(request)
+        events, _ = filter_events(request)
+        events = sorted_events_ajax(events, request)
 
         map_center = [52.0, 19.0] 
         folium_map = folium.Map(location=map_center, zoom_start=6)

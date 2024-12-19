@@ -4,9 +4,9 @@
         type="text" 
         name="search" 
         class="form-control {{ input_classes }}" 
-        placeholder="Szukaj wydarzenia" 
+        placeholder="{% if request.session.search %}{{ request.session.search }}{% else %}Szukaj wydarzenia{% endif %}" 
+        value="{{ request.session.search|default_if_none:'' }}"
         aria-label="Szukaj wydarzenia"
-        value="{{ request.GET.search|default_if_none:'' }}"
     >
 
     <!-- Select do sortowania -->
@@ -17,7 +17,9 @@
         <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>sortuj: Najnowsze</option>
         <option value="popularity" {% if request.GET.sort == 'popularity' %}selected{% endif %}>sortuj: Popularność</option>
         <option value="participants" {% if request.GET.sort == 'participants' %}selected{% endif %}>sortuj: Liczba uczestników</option>
-        <option value="nearest" {% if request.GET.sort == 'nearest' %}selected{% endif %}>sortuj: Najbliżej mnie</option>
+        {% if request.session.user_location %}
+            <option value="nearest" {% if request.GET.sort == 'nearest' %}selected{% endif %}>sortuj: Najbliżej mnie</option>
+        {% endif %}
     </select>
 
     <!-- Przycisk wyszukiwania -->

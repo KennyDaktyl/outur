@@ -2,6 +2,7 @@ from django.contrib import admin
 from web.models.accounts import ActivateToken, Profile
 from web.models.categories import Category
 from web.models.events import Event, EventMessage, EventParticipant, EventLike
+from web.models.images import Thumbnail
 
 from django.contrib.admin import ModelAdmin
 from django.contrib.gis.db import models
@@ -51,7 +52,7 @@ class EventCategoryAdmin(GISModelAdmin):
         "name", "location", "short_description", "city", "street", "postal_code", "house_number", "apartment_number",
         "description", "main_image", "gallery_image_1", "gallery_image_2", "gallery_image_3", "gallery_image_4", "categories", "event_type",
         "one_day_date", "start_date", "end_date", "website", "contact_email", "location_type", "added_by", "entry_type", "day_of_week",
-        "created_by", "created_at", "updated_at"
+        "created_by", "created_at", "updated_at", "thumbnails_cache"
     )
     list_per_page = 20
     save_on_top = True
@@ -111,3 +112,16 @@ class ActivateTokenAdmin(admin.ModelAdmin):
     search_fields = ("id", "user__username")
     list_filter = ["is_used"]
     
+    
+@admin.register(Thumbnail)
+class ThumbnailAdmin(admin.ModelAdmin):
+    list_display = ("event_id", "image", "mimetype", "width", "height", "image_type")
+    list_filter = ("image_type",)
+    search_fields = ("event_id__name",)
+    list_per_page = 20
+    save_on_top = True
+    list_display_links = ("event_id",)
+    list_select_related = True
+    list_max_show_all = 100
+    readonly_fields = ("width", "height")
+    ordering = ("-id",)

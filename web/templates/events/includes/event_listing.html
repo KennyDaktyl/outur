@@ -7,11 +7,30 @@
     <div class="card event-item w-100 d-flex flex-row bg-white shadow-sm border-0 mb-3">
         <!-- Tekst -->
         <div class="card-body col-12 d-flex flex-column">
-            <div class="col-12 d-flex justify-content-between align-items-center">
+            <div class="col-12 d-flex flex-wrap justify-content-between align-items-center">
                 <a href="{% url 'events:event_details' pk=event.pk %}" class="card-title event-title col-9 text-dark fw-bold mb-2">
-                    <h5>{{ event.name }}</h5>
+                    <h5 class="col-12">{{ event.name }}</h5>
+                    <small class="col-12 text-dark text-muted">Dodano:&nbsp;{{ event.created_at }}</small>
                 </a>
                 <div class="col-3 d-flex justify-content-end align-items-center">
+                    <span id="likes-count-{{ event.id }}" class="me-2">{{ event.likes_count }}</span>
+                    {% if user.is_authenticated %}
+                        <!-- Ikona do polubienia wydarzenia -->
+                        <i class="fa fa-heart{% if event.is_liked %} text-danger{% else %} text-dark{% endif %} me-2" 
+                        data-event-id="{{ event.id }}" 
+                        style="cursor: pointer;"
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top" 
+                        title="{% if event.is_liked %}Kliknij, aby usunąć polubienie{% else %}Kliknij, aby polubić{% endif %}"
+                        onclick="toggleLike(this)"></i>
+                    {% else %}
+                        <!-- Ikona z chmurką informującą o konieczności zalogowania -->
+                        <i class="fa fa-heart text-dark me-2" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top" 
+                        title="Zaloguj się, aby polubić wydarzenie" 
+                        style="cursor: not-allowed;"></i>
+                    {% endif %}
                     <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size=""><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Udostępnij</a></div>
                 </div>
             </div>
@@ -30,7 +49,9 @@
                 </div>
             </div>
             <div class="d-flex flex-wrap justify-content-between align-items-start mt-2">
-                <p class="col-card-text text-dark {% if event.main_image %}col-12 col-xl-8{% else %}col-12{% endif %}">{{ event.short_description|truncatechars:550 }}</p>
+                <p class="col-12 mt-2 mb-1">Rodzaj:&nbsp;{% for category in event.categories.all %}<span>{{ category.name }}{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</p>
+                <p class="col-12 mt-2 mb-1 fw-bold">Opis</p>
+                <p class="col-card-text text-dark {% if event.main_image %}col-12 col-xl-8{% else %}col-12{% endif %} pe-2">{{ event.short_description|truncatechars:550 }}</p>
                 {% if event.main_image %}
                     <!-- Zdjęcie -->
                     <div class="col-12 col-xl-4 p-0">
@@ -112,7 +133,7 @@
     {% endif %}
 
     {% if request.resolver_match.url_name == 'user_events' %}
-        {% include 'events/includes/event_messages.html' with messages=event.messages.all %}
+        {% include 'events/includes/event_messages.html' with events_messages=event.messages.all %}
     {% endif %}
 {% endfor %}
 

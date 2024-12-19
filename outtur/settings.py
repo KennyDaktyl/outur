@@ -15,7 +15,7 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 
 if os.environ.get('ENVIRONMENT') in ['production',]:
-    DOMAIN_URL = "https://outtur.pl"
+    DOMAIN_URL = "https://outtur.com"
 else:
     DOMAIN_URL = "http://127.0.0.1:8000"
 

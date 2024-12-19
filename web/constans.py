@@ -28,3 +28,11 @@ ADDED_BY_CHOICES = [
     ('organizer', 'Organizatora'),
     ('participant', 'Uczestnika'),
 ]
+
+IMAGE_TYPE = [
+    (1, "Zdjęcie głowne"),
+    (2, "Galeria 1"),
+    (3, "Galeria 2"),
+    (4, "Galeria 3"),
+    (5, "Galeria 4"),
+]

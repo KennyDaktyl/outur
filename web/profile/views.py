@@ -11,6 +11,7 @@ from django.shortcuts import render
 from web.events.forms import MessageForm
 from web.models.events import Event, EventMessage, EventParticipant
 from web.profile.forms import ProfileForm
+from django.db.models import Count
 
 from django.contrib.auth.models import User
 
@@ -53,7 +54,10 @@ class UserEventsCreated(ListView):
     
 
     def get_queryset(self):
-        return Event.objects.filter(created_by=self.request.user.id)
+        return Event.objects.filter(created_by=self.request.user.id).annotate(
+            participants_count=Count('participants'),
+            likes_count=Count('likes')
+        ).order_by('-created_at')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -70,7 +74,12 @@ class UserEventsJoined(ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return Event.objects.filter(participants__user=self.request.user).distinct()
+        return Event.objects.filter(
+            participants__user=self.request.user
+        ).annotate(
+            participants_count=Count('participants'),
+            likes_count=Count('likes')
+        ).order_by('-created_at').distinct()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -82,7 +91,7 @@ class UserEventsJoined(ListView):
 class UserEventMessagesView(ListView):
     model = EventMessage
     template_name = 'profile/user_event_messages.html'
-    context_object_name = 'messages'
+    context_object_name = 'events_messages'
     paginate_by = 20
 
     def get_queryset(self):

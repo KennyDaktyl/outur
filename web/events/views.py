@@ -7,10 +7,13 @@ from django.http import Http404
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.urls import reverse
-from django.db.models import Q, Count
+from django.contrib.gis.measure import D
+from django.contrib.gis.db.models.functions import Distance
+from django.conf import settings
 
 from bs4 import BeautifulSoup
 
+from web.events.filters import filter_events_base, get_events_base, sorted_events_session
 from web.events.forms import AbuseReportForm, EventFilterForm
 from web.models.events import Event
 
@@ -20,24 +23,12 @@ class EventsView(ListView):
     paginate_by = 20
     
     def get_queryset(self):
-        queryset = Event.objects.all().annotate(
-            participants_count=Count('participants')
-        )
-        search_query = self.request.GET.get('search', '').strip()
-        sort_option = self.request.GET.get('sort', 'newest')
-
-        if search_query:
-            queryset = queryset.filter(Q(name__icontains=search_query))
-
-        if sort_option == 'newest':
-            queryset = queryset.order_by('-created_at', 'name') 
-        elif sort_option == 'popularity':
-            queryset = queryset.order_by('-popularity', '-created_at')
-        elif sort_option == 'participants':
-            queryset = queryset.order_by('-participants_count', '-created_at')
-        elif sort_option == 'nearest':
-            pass
-
+        filtered_options = self.request.session.get("event_filters", {})
+        
+        queryset = get_events_base(self.request)
+        queryset = filter_events_base(filtered_options, queryset)
+        queryset = sorted_events_session(queryset, self.request)
+        
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -120,6 +111,15 @@ class EventMapView(TemplateView):
 
 class EventsMapView(TemplateView):
     template_name = "events/events_listing_map.html"
+    
+    def get_queryset(self):
+        filtered_options = self.request.session.get("event_filters", {})
+        
+        queryset = get_events_base(self.request)
+        queryset = filter_events_base(filtered_options, queryset)
+        queryset = sorted_events_session(queryset, self.request)
+        
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -128,7 +128,7 @@ class EventsMapView(TemplateView):
         context['filter_form'] = EventFilterForm(self.request.GET or None, session_data=session_data)
         context['search_form_on'] = True
 
-        events = Event.objects.all()
+        events = self.get_queryset()
 
         map_center = [52.0, 19.0] 
         folium_map = folium.Map(location=map_center, zoom_start=6)
