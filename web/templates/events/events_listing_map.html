@@ -12,6 +12,13 @@
 </div>
 {% endblock %}
 
+{% block pagination %}
+<!-- Paginacja -->
+<div class="pagination-container col-12 d-flex justify-content-center align-items-start">
+    {% include "utils/pagination.html" %}
+</div>
+{% endblock %}
+
 {% block home_js %}
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/filters_events_map.js' %}"></script>

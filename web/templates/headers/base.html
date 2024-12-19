@@ -120,7 +120,7 @@
     </div>
 
     <!-- Ukryte menu filtrów (otwiera się pod przyciskiem) -->
-    <div id="filtersMenuMobile" class="collapse bg-white container mx-auto">
+    <form id="filtersMenuMobile" class="filters_form collapse bg-white container mx-auto">
         <div class="container py-3">
             <div class="row">
                 <!-- Lewa kolumna filtrów -->
@@ -136,7 +136,7 @@
                                         id="id_mobile_categories_{{ value }}" 
                                         name="{{ filter_form.categories.html_name }}" 
                                         value="{{ value }}"
-                                        {% if value in filter_form.categories.value %} checked {% endif %}
+                                        {% if value in request.session.event_filters.categories %} checked {% endif %}
                                     >
                                     <label 
                                         class="form-check-label col-10" 
@@ -162,7 +162,7 @@
                                         id="id_mobile_location_type_{{ value }}" 
                                         name="{{ filter_form.location_type.html_name }}" 
                                         value="{{ value }}"
-                                        {% if value in filter_form.location_type.value %} checked {% endif %}
+                                        {% if value in request.session.event_filters.location_type %} checked {% endif %}
                                     >
                                     <label 
                                         class="col-10 form-check-label" 
@@ -185,7 +185,7 @@
                                         id="id_mobile_entry_{{ value }}" 
                                         name="{{ filter_form.entry_type.html_name }}" 
                                         value="{{ value }}"
-                                        {% if value in filter_form.entry_type.value %} checked {% endif %}
+                                        {% if value == request.session.event_filters.entry_type %} checked {% endif %}
                                     >
                                     <label 
                                         class="col-10 form-check-label" 
@@ -208,7 +208,7 @@
                                         id="id_mobile_added_by_{{ value }}" 
                                         name="{{ filter_form.added_by.html_name }}" 
                                         value="{{ value }}"
-                                        {% if value in filter_form.added_by.value %} checked {% endif %}
+                                        {% if value == request.session.event_filters.added_by %} checked {% endif %}
                                     >
                                     <label 
                                         class="col-10 form-check-label" 
@@ -222,7 +222,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 {% endif %}
 
 {% endblock %}

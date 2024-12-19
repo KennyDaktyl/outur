@@ -115,6 +115,7 @@ class EventMapView(TemplateView):
 
 class EventsMapView(TemplateView):
     template_name = "events/events_listing_map.html"
+    paginate_by = 20
     
     def get_queryset(self):
         filtered_options = self.request.session.get("event_filters", {})
@@ -127,17 +128,31 @@ class EventsMapView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        events = self.get_queryset()
+        
+        page = self.request.GET.get('page', 1) 
+        paginator = Paginator(events, self.paginate_by)
+        
+        try:
+            page_obj = paginator.page(page)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
+            
         session_data = self.request.session.get("event_filters", {})
+        
         context['filter_form'] = EventFilterForm(self.request.GET or None, session_data=session_data)
         context['search_form_on'] = True
+        context['events'] = page_obj.object_list  
+        context['page_obj'] = page_obj  
+        context['paginator'] = paginator  
 
-        events = self.get_queryset()
 
         map_center = [52.0, 19.0] 
         folium_map = folium.Map(location=map_center, zoom_start=6)
 
-        for event in events:
+        for event in page_obj.object_list:
             if event.location:
                 latitude = event.location.y
                 longitude = event.location.x

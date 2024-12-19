@@ -10,9 +10,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (spinner) spinner.style.display = "none";
     };
 
+    const enforceSingleSelect = (formSelector, checkboxSelector) => {
+        const form = document.querySelector(formSelector);
+        if (!form) return;
 
-    const enforceSingleSelect = (selector) => {
-        const checkboxes = document.querySelectorAll(selector);
+        const checkboxes = form.querySelectorAll(checkboxSelector);
 
         checkboxes.forEach((checkbox) => {
             checkbox.addEventListener("change", function () {
@@ -21,20 +23,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (cb !== this) cb.checked = false;
                     });
                 }
-                debounceSubmit();
+                debounceSubmit(formSelector);
             });
         });
     };
 
-    const debounceSubmit = () => {
+    const debounceSubmit = (formSelector) => {
         clearTimeout(debounceTimeout);
         debounceTimeout = setTimeout(() => {
-            submitFiltersForm();
+            submitFiltersForm(formSelector);
         }, 1000);
     };
 
-    const submitFiltersForm = () => {
-        const form = document.querySelector("form.filters_form");
+    const submitFiltersForm = (formSelector) => {
+        const form = document.querySelector(formSelector);
         const mapContainer = document.querySelector("#map");
 
         if (!form || !mapContainer) {
@@ -61,8 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then((data) => {
                 if (data.map_html) {
-                    mapContainer.innerHTML = data.map_html; // Podstaw nową mapę
-                    initializeMapInteractions(); // Ponowna inicjalizacja mapy, jeśli wymagane
+                    mapContainer.innerHTML = data.map_html;
+                    initializeMapInteractions();
                 }
             })
             .catch((error) => {
@@ -76,34 +78,37 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const initializeMapInteractions = () => {
-        // Tutaj możesz ponownie zainicjalizować dowolne interakcje związane z mapą
         console.log("Mapa została odświeżona.");
     };
 
-    // Inicjalizacja listenerów dla checkboxów
-    const initializeFilterListeners = () => {
-        const allCheckboxes = document.querySelectorAll(".form-check-input");
+    const initializeFilterListeners = (formSelector) => {
+        const form = document.querySelector(formSelector);
+        if (!form) return;
+
+        const allCheckboxes = form.querySelectorAll(".form-check-input");
         allCheckboxes.forEach((checkbox) => {
-            checkbox.addEventListener("change", debounceSubmit);
+            checkbox.addEventListener("change", () => debounceSubmit(formSelector));
         });
     };
 
-    // Inicjalizacja aplikacji
     const init = () => {
-        initializeFilterListeners();
+        // Obsługa formularzy mobilnych i desktopowych
+        const mobileFormSelector = "#filtersMenuMobile";
+        const desktopFormSelector = "#filtersMenuDesktop";
+
+        initializeFilterListeners(mobileFormSelector);
+        initializeFilterListeners(desktopFormSelector);
+
+        enforceSingleSelect(mobileFormSelector, ".location-checkbox");
+        enforceSingleSelect(mobileFormSelector, ".entry-checkbox");
+        enforceSingleSelect(mobileFormSelector, ".added-by-checkbox");
+
+        enforceSingleSelect(desktopFormSelector, ".location-checkbox");
+        enforceSingleSelect(desktopFormSelector, ".entry-checkbox");
+        enforceSingleSelect(desktopFormSelector, ".added-by-checkbox");
+
         console.log("Filters map script initialized.");
     };
 
     init();
-
-     // Wymuszanie jednokrotnego wyboru dla każdej grupy
-     enforceSingleSelect(".location-checkbox");
-     enforceSingleSelect(".entry-checkbox");
-     enforceSingleSelect(".added-by-checkbox");
- 
-     // Dodaj listener do wszystkich checkboxów
-     const allCheckboxes = document.querySelectorAll(".form-check-input");
-     allCheckboxes.forEach((checkbox) => {
-         checkbox.addEventListener("change", debounceSubmit); 
-     });
 });

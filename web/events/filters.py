@@ -36,6 +36,9 @@ def filter_events_base(cleaned_data, queryset):
     
 def filter_events(request):
     session_filters = request.session.get("event_filters", {})
+    if not request.GET:
+        request.session["event_filters"] = {}
+        session_filters = {}
     request_filters = request.GET or session_filters
     
     filter_form = EventFilterForm(request_filters)

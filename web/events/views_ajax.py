@@ -1,4 +1,5 @@
 import folium
+from bs4 import BeautifulSoup
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -86,6 +87,16 @@ def ajax_filter_events_map(request):
 
         map_center = [52.0, 19.0] 
         folium_map = folium.Map(location=map_center, zoom_start=6)
+        
+        page = request.GET.get("page", 1)
+
+        paginator = Paginator(events, 20)
+        try:
+            page_obj = paginator.page(page)
+        except PageNotAnInteger:
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            page_obj = paginator.page(paginator.num_pages)
 
         for event in events:
             if event.location:
@@ -100,10 +111,22 @@ def ajax_filter_events_map(request):
                 ).add_to(folium_map)
 
         map_html = folium_map._repr_html_()
-        map_html = map_html.replace(
+        
+        soup = BeautifulSoup(map_html, 'html.parser')
+        for span in soup.find_all("span", string=lambda text: "Make this Notebook Trusted" in text if text else False):
+            span.decompose()  
+        
+        map_html_cleaned = str(soup)
+        
+        map_html = map_html_cleaned.replace(
         'style="position:relative;width:100%;height:0;padding-bottom:60%;"',
         'style="position:relative;" id="map-container"'
         )
-        return JsonResponse({"map_html": map_html})
+        
+        pagination_html = render_to_string(
+            "utils/pagination.html", {"paginator": paginator, "page_obj": page_obj}
+        )
+        
+        return JsonResponse({"map_html": map_html, "pagination": pagination_html})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
