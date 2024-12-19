@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
 from django.conf import settings
+from django.db.models import Count
 
 from bs4 import BeautifulSoup
 
@@ -67,6 +68,9 @@ class EventDetails(DetailView):
         context['form'] = AbuseReportForm()
         
         event = self.object
+        
+        event.participants_count = event.participants.count()
+        event.likes_count = event.likes.count()
         user = self.request.user
         if user.is_authenticated:
             event.is_liked = event.likes.filter(user=user).exists()

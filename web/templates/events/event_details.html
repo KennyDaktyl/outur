@@ -32,6 +32,27 @@
                     title="Zaloguj się, aby polubić wydarzenie" 
                     style="cursor: not-allowed;"></i>
                 {% endif %}
+
+                <span id="users-count-{{ event.id }}" class="ms-4">{{ event.users_count }}</span>
+                {% if user.is_authenticated %}
+                    <!-- Ikona do dodania użytkownika do wydarzenia -->
+                    <i class="fa-solid add-user-to-event fa-users text-dark fs-5" 
+                        data-event-id="{{ event.id }}" 
+                        style="cursor: pointer;"
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top" 
+                        title="Kliknij, aby dołączyć do wydarzenia"
+                        onclick="addUserToEvent(this)"
+                        ></i>
+                {% else %}
+                    <!-- Ikona z chmurką informującą o konieczności zalogowania -->
+                    <i class="fa-solid fa-users text-dark fs-5" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top" 
+                        title="Zaloguj się, aby dołączyć do wydarzenia" 
+                        style="cursor: not-allowed;"></i>
+                {% endif %}
+
                 <div class="ms-3">
                     <div class="fb-share-button" 
                         data-href="{{ request.build_absolute_uri }}" 
@@ -60,8 +81,13 @@
         </div>
 
         <!-- Szczegóły wydarzenia -->
-        <div class="col-lg-12 d-flex flex-wrap">
-            <p class="col-12">{{ event.address }}</p>
+        <div class="col-lg-12 d-flex flex-wrap justify-content-between align-items-center">
+            <div class="col-12 p-0 m-0 d-flex">
+                <p class="">{{ event.address }}</p>
+                {% if event.location %}
+                    <a href="{% url 'events:event_map' pk=event.id %}" class="ms-2 card-text map-link text-dark text-decoration-underline">mapa</a>
+                {% endif %}
+            </div>
             <div class="col-xl-5 p-0 m-0 d-flex">
                 <strong>Dodane przez:&nbsp;{{ event.get_added_by_display }}:&nbsp;</strong> 
                 <a href="#" class="text-dark text-decoration-underline">
@@ -70,7 +96,15 @@
                     {% endif %}
                 </a>
             </div>
-            <p class="col-xl-5 p-0 m-0">{{ event.date_info }}</p>
+            <p class="col-xl-5 p-0 m-0 text-end">Data wydarzenia:&nbsp;{{ event.date_info }}</p>
+
+            <!-- Opis wydarzenia -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h3 class="fw-bold mb-3">W skrócie</h3>
+                    <p>{{ event.short_description|linebreaks }}</p>
+                </div>
+            </div>
 
             <!-- Opis wydarzenia -->
             <div class="row mt-4">
@@ -84,7 +118,9 @@
                 <strong>Szczegóły:</strong>
             </p>
             <p class="col-12 p-0 m-0">Kontakt:&nbsp;<a href="mailto:{{ event.contact_email }}" class="text-dark">{{ event.contact_email }}</a></p>
-            <p class="col-12 p-0 m-0">Strona:&nbsp;<a href="{{ event.website }}" target="_blank" class="text-dark">{{ event.website }}</a></p>
+            {% if event.website %}
+                <p class="col-12 p-0 m-0">Strona:&nbsp;<a href="{{ event.website }}" target="_blank" class="text-dark">{{ event.website }}</a></p>
+            {% endif %}
             <p class="col-12 p-0 m-0">Wstęp:&nbsp;{{ event.get_entry_type_display }}</p>
             <p class="col-12 p-0 m-0">Rodzaj:&nbsp;{% for category in event.categories.all %}<span>{{ category.name }}{% if not forloop.last %},&nbsp;{% endif %}{% endfor %}</p>
             <p class="col-12 p-0 m-0">Cykl imprezy:&nbsp;{{ event.get_event_type_display }}</p>
