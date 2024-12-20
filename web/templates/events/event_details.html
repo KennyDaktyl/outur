@@ -2,8 +2,8 @@
 
 {% load static %}
 
-{% block title %}{{ event.title }}{% endblock %}
-{% block description %}Outtur.com wydarzenie {{ event.title }}. {{ event.short_description|truncatechars:160 }}{% endblock %}
+{% block title %}{{ event.name }}{% endblock %}
+{% block description %}Outtur.com wydarzenie {{ event.name }}. {{ event.short_description|truncatechars:160 }}{% endblock %}
 
 {% block content %}
 <div id="fb-root"></div>
