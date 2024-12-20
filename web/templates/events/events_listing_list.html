@@ -2,10 +2,16 @@
 
 {% load static %}
 
+{% block title %}Outtur.com Lista wydarzeń{% endblock %}
+{% block description %}Outtur.com Lista wydarzeń{% endblock %}
+
 {% block home_main %}
 <!-- Lista wydarzeń -->
 <div class="event_listing col-12 d-flex justify-content-start align-items-start flex-wrap">
     {% include "events/includes/event_listing.html" %}
+    <div id="map" style="width: 100%;">
+        {{ map_html|safe }}
+    </div>
 </div>
 {% endblock %}
 
@@ -18,5 +24,5 @@
 
 {% block home_js %}
     <script src="{% static 'js/filters_events.js' %}"></script>
-    <script src="{% static 'js/events.js' %}"></script>
+    <script src="{% static 'js/user_actions.js' %}"></script>
 {% endblock %}

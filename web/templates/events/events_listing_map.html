@@ -2,10 +2,12 @@
 
 {% load static %}
 
+{% block title %}Outtur.com Mapa wydarzeń{% endblock %}
+{% block description %}Outtur.com Mapa wydarzeń{% endblock %}
 
 {% block home_main %}
 <!--Mapa wydarzenia -->
-<div class="col-12 d-flex justify-content-start align-items-start flex-wrap">
+<div class="event_listing col-12 d-flex justify-content-start align-items-start flex-wrap">
     <div id="map" style="width: 100%;">
         {{ map_html|safe }}
     </div>
@@ -21,5 +23,5 @@
 
 {% block home_js %}
     <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/filters_events_map.js' %}"></script>
+    <script src="{% static 'js/filters_events.js' %}"></script>
 {% endblock %}

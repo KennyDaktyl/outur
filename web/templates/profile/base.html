@@ -6,6 +6,9 @@
 <!-- Lewa kolumna - Menu kategorii -->
 <div class="d-none d-xl-flex col-xl-2">
     <div class="d-xl-flex col-12 justify-content-start align-items-start flex-column border-end p-0 m-0 bg-white">
+        <a href="{% url 'cms:create_event' %}" class="col-12 p-2">
+            <span class="text-dark {% if request.resolver_match.url_name == 'create_event' %}fw-bolder{% endif %}">Dodaj Wydarzenie</span>
+        </a>
         <a href="{% url 'profile:update_profile' %}" class="col-12 p-2">
             <span class="text-dark {% if request.resolver_match.url_name == 'update_profile' %}fw-bolder{% endif %}">Moje konto</span>
         </a>
@@ -26,5 +29,5 @@
 {% endblock %}
 
 {% block home_js %}
-    <script src="{% static 'js/events.js' %}"></script>
+    <script src="{% static 'js/user_actions.js' %}"></script>
 {% endblock %}

@@ -12,7 +12,7 @@ urlpatterns = [
    path('ajax/filter-events/', ajax_filter_events, name='ajax_filter_events'),
    path('ajax/filter-events-map/', ajax_filter_events_map, name='ajax_filter_events_map'),
    
-   path('<int:pk>/', EventDetails.as_view(), name='event_details'),
+   path('<slug:slug>/<int:pk>/', EventDetails.as_view(), name='event_details'),
    path('mapa/<int:pk>/', EventMapView.as_view(), name='event_map'),
    path('mapa/', EventsMapView.as_view(), name='events_map'),
    path('lista/', EventsView.as_view(), name='events_list'),

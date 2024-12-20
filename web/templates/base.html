@@ -12,8 +12,14 @@
     <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
 
-    <title>{% block title %}Tytuł domyślny{% endblock %}</title>
     
+    <title>
+        {% block title %}
+            Outtur.com Portal z wydarzeniami w Twojej okolicy
+        {% endblock %}
+    </title>
+    <meta name="description" content="{% block description %}Outtur.com Portal z wydarzeniami w Twojej okolicy{% endblock %}">
+
     <!-- Blok na dodatkowe meta tagi -->
     {% block meta %}
     {% endblock %}

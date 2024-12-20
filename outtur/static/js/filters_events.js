@@ -37,10 +37,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const submitFiltersForm = (formSelector, page = 1) => {
         const form = document.querySelector(formSelector);
+        const url = form.getAttribute("action").replace(" ", "");
+        
+        const mapContainer = document.querySelector("#map");
         const eventsContainer = document.querySelector(".event_listing");
         const paginationContainer = document.querySelector(".pagination-container");
 
         if (!form || !eventsContainer || !paginationContainer) {
+            console.log(form, eventsContainer, paginationContainer);
             console.warn("Brak formularza filtrów, listy wydarzeń lub kontenera paginacji!");
             return;
         }
@@ -52,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         showSpinner();
 
-        fetch(`/wydarzenia/ajax/filter-events/?${params}`, {
+        fetch(`${url}?${params.toString()}`, {
             method: "GET",
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
@@ -72,6 +76,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     paginationContainer.innerHTML = data.pagination;
                     initializePagination(formSelector);
                 }
+                if (data.map_html) {
+                    mapContainer.innerHTML = data.map_html;
+                    initializeMapInteractions();
+                }
                 if (typeof FB !== "undefined" && FB.XFBML) {
                     FB.XFBML.parse();
                 }
@@ -84,6 +92,10 @@ document.addEventListener("DOMContentLoaded", function () {
             .finally(() => {
                 hideSpinner();
             });
+    };
+
+    const initializeMapInteractions = () => {
+        console.log("Mapa została odświeżona.");
     };
 
     const handlePaginationClick = (event, formSelector) => {

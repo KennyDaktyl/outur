@@ -2,6 +2,9 @@
 
 {% load static %}
 
+{% block title %}{{ event.title }}{% endblock %}
+{% block description %}Outtur.com wydarzenie {{ event.title }}. {{ event.short_description|truncatechars:160 }}{% endblock %}
+
 {% block content %}
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/pl_PL/sdk.js#xfbml=1&version=v21.0&appId=1766955874049180"></script>
@@ -19,6 +22,7 @@
                     <!-- Ikona do polubienia wydarzenia -->
                     <i class="fa fa-heart{% if event.is_liked %} text-danger{% else %} text-dark{% endif %}" 
                     data-event-id="{{ event.id }}" 
+                    data-add-like-url="{% url 'events:add_like_event' event_id=event.id %}"
                     style="cursor: pointer;"
                     data-bs-toggle="tooltip" 
                     data-bs-placement="top" 
@@ -38,6 +42,7 @@
                     <!-- Ikona do dodania użytkownika do wydarzenia -->
                     <i class="fa-solid add-user-to-event fa-users text-dark fs-5" 
                         data-event-id="{{ event.id }}" 
+                        data-add-user-url="{% url 'events:add_user_to_event' event_id=event.id %}"
                         style="cursor: pointer;"
                         data-bs-toggle="tooltip" 
                         data-bs-placement="top" 
@@ -216,4 +221,5 @@
 {% block js %}
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/event_details.js' %}"></script>
+    <script src="{% static 'js/user_actions.js' %}"></script>
 {% endblock %}

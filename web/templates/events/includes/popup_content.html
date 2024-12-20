@@ -2,7 +2,7 @@
     {% if event.main_image %}
         <img src="{{ event.main_image.url }}" alt="{{ event.name }}" style="width: 100%; height: auto;"/>
     {% endif %}
-    <a href="{% url 'events:event_details' pk=event.pk %}" target="_blank">
+    <a href="{% url 'events:event_details' slug=event.slug pk=event.pk %}" target="_blank">
         <h4 class="mt-2">{{ event.name }}</h4>
     </a>
     <div class="col-12 col-xl-3 d-flex justify-content-end align-items-center">

@@ -73,6 +73,9 @@
     <div id="mobileMenu" class="collapse w-100 d-xl-none mb-2">
         <ul class="list-group">
             <li class="list-group-item p-2">
+                <a href="{% url 'cms:create_event' %}" class="text-dark p-3 mt-2 mb-2 {% if request.resolver_match.url_name == 'create_event' %}fw-bolder{% endif %}">Dodaj wydarznie</a>
+            </li>
+            <li class="list-group-item p-2">
                 <a href="{% url 'profile:update_profile' %}" class="text-dark p-3 mt-2 mb-2 {% if request.resolver_match.url_name == 'update_profile' %}fw-bolder{% endif %}">Moje konto</a>
             </li>
             <li class="list-group-item p-2">
@@ -120,7 +123,10 @@
     </div>
 
     <!-- Ukryte menu filtrów (otwiera się pod przyciskiem) -->
-    <form id="filtersMenuMobile" class="filters_form collapse bg-white container mx-auto">
+    <form id="filtersMenuMobile" 
+        class="filters_form collapse bg-white container mx-auto" 
+        action="{% if request.resolver_match.url_name == 'events_list' %}{% url 'events:ajax_filter_events' %}{% else %}{% url 'events:ajax_filter_events_map' %}{% endif %}"
+        >
         <div class="container py-3">
             <div class="row">
                 <!-- Lewa kolumna filtrów -->
