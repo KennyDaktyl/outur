@@ -5,19 +5,36 @@
 {% block title %}{% endblock %}
 {% block description %}{% endblock %}
 
-{% block home_main %}
-<!-- Lista wydarzeń -->
-<div class="event_listing col-12 d-flex justify-content-start align-items-start flex-wrap">
-    <a class="col-12" href="{% url 'events:events_list' %}">Lista wydarzeń</a>
-    <a class="col-12" href="{% url 'events:events_map' %}">Mapa wydarzeń</a>
-</div>
-{% endblock %}
-
-{% block pagination %}
-<!-- Paginacja -->
-<div class="pagination-container col-12 d-flex justify-content-center align-items-start">
-    {% include "utils/pagination.html" %}
-</div>
+{% block content %}
+    {% csrf_token %}
+    <div class="container mt-2 p-0 m-0">
+        <div class="hero-container col-12 bg-orange d-flex flex-wrap justify-content-center align-items-center">
+            <div class="col-xl-6 d-flex justify-content-center align-items-center flex-wrap text-white">
+                <p class="h4 text-center col-12 fw-bolder">Pamiętaj dodanie wydarzenia jest</p>
+                <p class="h1 text-center col-12 fw-bolder">bezpłatne</p>
+            </div>
+            <div class="col-12 col-xl-6 d-flex justify-content-center align-items-center flex-wrap text-white">
+                <a href="{% if request.user.is_authenticated %}{% url 'cms:create_event' %}{% else %}{% url 'auth:login' %}{% endif %}" class="col-10 col-xl-6 text-center btn btn-primary rounded-20 fw-bolder p-2">Dodaj wydarzenie</a>
+            </div>
+        </div>
+        <div class="mt-5 d-flex flex-wrap justify-content-between align-items-start">
+            <a href="{% url 'events:events_list' %}" class="hero-container position-relative col-12 col-xl-6 bg-danger text-white d-flex justify-content-center align-items-center flex-wrap">
+                <span class="position-absolute custom-position" style="top: 5%; left: 15%;">turystyka</span>
+                <span class="position-absolute custom-position" style="top: 10%; left: 70%;">dla dzieci</span>
+                <span class="position-absolute custom-position" style="top: 20%; left: 30%;">sportowe</span>
+                <span class="position-absolute custom-position" style="top: 40%; left: 50%;">gminne</span>
+                <span class="position-absolute custom-position" style="top: 60%; left: 10%;">zgromadzenia</span>
+                <span class="position-absolute custom-position" style="top: 20%; left: 80%;">zabawa</span>
+                <span class="position-absolute custom-position" style="top: 40%; left: 20%;">sąsiedzki</span>
+                <span class="position-absolute custom-position" style="top: 60%; left: 40%;">wyprzedaże garażowe</span>
+                <span class="position-absolute custom-position" style="top: 80%; left: 60%;">gastronomiczne</span>
+                <span class="position-absolute custom-position" style="top: 80%; left: 30%;">kulturalne</span>
+            </a>
+            <a href="{% url 'events:events_map' %}" class="col-12 col-xl-5 d-flex justify-content-center mt-5 mt-xl-0">
+                <img src="{% static 'images/wydarzenia-mapa.webp' %}" alt="hero1" class="img-fluid mx-auto" width="475px" height="350px">
+            </a>  
+        </div>
+    </div>
 {% endblock %}
 
 {% block home_js %}

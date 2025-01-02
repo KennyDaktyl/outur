@@ -18,6 +18,16 @@ class EventCreateView(CreateView):
     form_class = EventForm
     template_name = "cms/forms/event_form.html"
     success_url = reverse_lazy("profile:user_events")
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = context.get('form')
+        if form:
+            context['gallery_fields'] = {
+                f'gallery_image_{i}': form[f'gallery_image_{i}']
+                for i in range(1, 5)
+            }
+        return context
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -40,6 +50,16 @@ class EventUpdateView(UpdateView):
     form_class = EventForm
     template_name = "cms/forms/event_form.html"
     success_url = reverse_lazy("profile:user_events")
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = context.get('form')
+        if form:
+            context['gallery_fields'] = {
+                f'gallery_image_{i}': form[f'gallery_image_{i}']
+                for i in range(1, 5)
+            }
+        return context
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

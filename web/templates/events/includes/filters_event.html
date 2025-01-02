@@ -2,6 +2,55 @@
     method="get" 
     class="filters_form d-xl-flex col-12 justify-content-start align-items-start flex-column border-end p-0 m-0 bg-white"
     action="{% if request.resolver_match.url_name == 'events_list' %}{% url 'events:ajax_filter_events' %}{% else %}{% url 'events:ajax_filter_events_map' %}{% endif %}">
+    
+    <ul class="list-group col-12 mb-3 p-2">
+        <p class="fw-bold col-12 mt-2">{{ filter_form.date_filter.label }}</p>
+        <li class="list-group-item custom-list-group-item col-12">
+            <div class="form-check col-12 d-flex flex-wrap justify-content-start align-items-center">
+                <select 
+                    class="form-select col-12 me-2" 
+                    id="id_date_filter" 
+                    name="{{ filter_form.date_filter.html_name }}">
+                    {% for value, label in filter_form.date_filter.field.choices %}
+                        <option value="{{ value }}" 
+                            {% if value == request.session.event_filters.date_filter %} selected {% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </li>
+
+        <!-- Widoczna data, gdy użytkownik wybrał "Wybierz datę" -->
+        <li 
+            class="list-group-item custom-list-group-item col-12 mt-3" 
+            id="date-display-wrapper" 
+            {% if not request.session.event_filters.selected_date %}style="display: none;"{% endif %}>
+            <div class="d-flex justify-content-between align-items-center">
+                <p id="selected-date-text">
+                    Wybrana data: <br><span class="fw-semibold">{{ request.session.event_filters.selected_date }}</span>
+                </p>
+                <button 
+                    type="button" 
+                    id="change-date-button" 
+                    class="btn btn-secondary btn-sm ms-3">
+                    Zmień
+                </button>
+            </div>
+        </li>
+
+        <li class="list-group-item custom-list-group-item col-12 mt-3" id="date-picker-wrapper" style="display: none;">
+            <div class="form-check col-12 d-flex flex-wrap justify-content-start align-items-center">
+                <input 
+                    type="date" 
+                    id="id_selected_date" 
+                    name="{{ filter_form.selected_date.html_name }}" 
+                    class="form-control col-12"
+                    value="{% if request.session.event_filters.selected_date %}{{ request.session.event_filters.selected_date }}{% endif %}">
+            </div>
+        </li>
+    </ul>
+
     <ul class="list-group col-12 mb-3 p-2">
         <p class="fw-bold col-12 mt-2">{{ filter_form.categories.label }}</p>
         {% for value, label in filter_form.categories.field.choices %}

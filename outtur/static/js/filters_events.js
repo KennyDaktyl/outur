@@ -115,6 +115,56 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
 
+    const initializeDateFilter = (formSelector) => {
+        const form = document.querySelector(formSelector);
+        if (!form) return;
+    
+        const dateFilter = form.querySelector("#id_date_filter");
+        const datePickerWrapper = form.querySelector("#date-picker-wrapper");
+        const dateDisplayWrapper = form.querySelector("#date-display-wrapper");
+        const dateInput = form.querySelector("#id_selected_date");
+        const selectedDateText = form.querySelector("#selected-date-text");
+        const changeDateButton = form.querySelector("#change-date-button");
+    
+        if (dateFilter) {
+            dateFilter.addEventListener("change", () => {
+                if (dateFilter.value === "select_date") {
+                    // Pokaż kalendarz, ukryj wyświetlanie daty
+                    datePickerWrapper.style.display = "block";
+                    dateDisplayWrapper.style.display = "none";
+                    dateInput.focus();
+                } else {
+                    // Ukryj kalendarz i informację o dacie
+                    datePickerWrapper.style.display = "none";
+                    dateDisplayWrapper.style.display = "none";
+                    dateInput.value = ""; // Wyczyść pole daty
+                    debounceSubmit(formSelector); // Prześlij formularz
+                }
+            });
+        }
+    
+        if (changeDateButton) {
+            changeDateButton.addEventListener("click", () => {
+                // Przełącz na widok kalendarza
+                datePickerWrapper.style.display = "block";
+                dateDisplayWrapper.style.display = "none";
+                dateInput.focus();
+            });
+        }
+    
+        if (dateInput) {
+            dateInput.addEventListener("change", () => {
+                // Aktualizuj widok wybranej daty
+                if (dateInput.value) {
+                    selectedDateText.textContent = `Wybrana data: ${dateInput.value}`;
+                    dateDisplayWrapper.style.display = "block";
+                    datePickerWrapper.style.display = "none";
+                }
+                debounceSubmit(formSelector); // Prześlij formularz
+            });
+        }
+    };
+
     const initializeFilterListeners = (formSelector) => {
         const form = document.querySelector(formSelector);
         if (!form) return;
@@ -135,6 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
         enforceSingleSelect(mobileFormSelector, ".entry-checkbox");
         enforceSingleSelect(mobileFormSelector, ".added-by-checkbox");
         initializePagination(mobileFormSelector);
+        initializeDateFilter(mobileFormSelector);
 
         // Inicjalizacja dla formularzy desktopowych
         initializeFilterListeners(desktopFormSelector);
@@ -142,6 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
         enforceSingleSelect(desktopFormSelector, ".entry-checkbox");
         enforceSingleSelect(desktopFormSelector, ".added-by-checkbox");
         initializePagination(desktopFormSelector);
+        initializeDateFilter(desktopFormSelector);
 
         console.log("Filters script initialized for both mobile and desktop.");
     };

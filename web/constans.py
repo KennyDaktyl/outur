@@ -36,3 +36,10 @@ IMAGE_TYPE = [
     (4, "Galeria 3"),
     (5, "Galeria 4"),
 ]
+
+DATE_CHOICES = [
+    ('all', 'Wszystkie'),
+    ('today', 'Dzisiaj'),
+    ('tomorrow', 'Jutro'),
+    ('select_date', 'Wybierz datę'),
+]

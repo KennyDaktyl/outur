@@ -35,7 +35,7 @@ class Event(models.Model):
     )
     city = models.CharField(
         max_length=255, 
-        verbose_name="Miasto wydarzenia"
+        verbose_name="Miejscowość wydarzenia"
     )
     street = models.CharField(
         max_length=255, 
@@ -43,11 +43,15 @@ class Event(models.Model):
     )
     house_number = models.CharField(
         max_length=255, 
-        verbose_name="Numer domu wydarzenia"
+        verbose_name="Numer domu wydarzenia",
+        blank=True,
+        null=True
     )
     postal_code = models.CharField(
         max_length=6, 
-        verbose_name="Kod pocztowy wydarzenia"
+        verbose_name="Kod pocztowy wydarzenia",
+        blank=True,
+        null=True
     )
     apartment_number = models.CharField(
         max_length=255, 
@@ -186,6 +190,7 @@ class Event(models.Model):
         verbose_name="Data ostatniej aktualizacji"
     )
     thumbnails_cache = models.JSONField(default=dict, null=True, blank=True)
+    is_active = models.BooleanField(default=True, verbose_name="Aktywne")
     
     class Meta:
         verbose_name = "Wydarzenie"
@@ -331,9 +336,21 @@ class Event(models.Model):
     
     @property
     def address(self):
-        if self.apartment_number:
-            return f"{self.street} {self.house_number}/{self.apartment_number} , {self.postal_code} {self.city}"
-        return f"{self.street} {self.house_number} , {self.postal_code} {self.city}"
+        parts = [self.street] 
+
+        if self.house_number:
+            house_part = f"{self.house_number}"
+            if self.apartment_number:
+                house_part += f"/{self.apartment_number}"
+            parts.append(house_part)
+
+        if self.postal_code:
+            parts.append(f"{self.postal_code} {self.city}")
+        else:
+            parts.append(self.city)
+
+        return ", ".join(parts)
+
     
     @property
     def date_info(self):

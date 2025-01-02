@@ -8,54 +8,46 @@ from django.template.loader import render_to_string
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.urls import reverse
 from django.contrib.gis.measure import D
-from django.contrib.gis.db.models.functions import Distance
-from django.conf import settings
-from django.db.models import Count
+from django.db.models import Q 
+from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
 
-from web.events.filters import filter_events_base, get_events_base, sorted_events_session
+from web.events.filters import filter_events, filter_events_base, get_events_base, get_filtered_queryset, sorted_events_ajax, sorted_events_session
 from web.events.forms import AbuseReportForm, EventFilterForm
+from web.events.serializers import EventSerializer
 from web.models.events import Event
 
 
 class EventsView(ListView):
     template_name = 'events/events_listing_list.html'
     paginate_by = 20
-    
+
     def get_queryset(self):
-        filtered_options = self.request.session.get("event_filters", {})
-        
-        queryset = get_events_base(self.request)
-        queryset = filter_events_base(filtered_options, queryset)
-        queryset = sorted_events_session(queryset, self.request)
-        
-        return queryset
+        return get_filtered_queryset(self.request)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        events = self.get_queryset()
-
-        page = self.request.GET.get('page', 1) 
-        paginator = Paginator(events, self.paginate_by)
-        
-        try:
-            page_obj = paginator.page(page)
-        except PageNotAnInteger:
-            page_obj = paginator.page(1)
-        except EmptyPage:
-            page_obj = paginator.page(paginator.num_pages)
-
-        session_data = self.request.session.get("event_filters", {})
-        
-        context['filter_form'] = EventFilterForm(self.request.GET or None, session_data=session_data)
+        session_filters = self.request.session.get("event_filters", {})
+        context['filter_form'] = EventFilterForm(initial=session_filters)
         context['form_action'] = reverse('events:events_list')
         context['search_form_on'] = True
-        context['events'] = page_obj.object_list  
-        context['page_obj'] = page_obj  
-        context['paginator'] = paginator  
+        context['events'] = self.get_paginated_events().object_list
+        context['page_obj'] = self.get_paginated_events()
+        context['paginator'] = context['page_obj'].paginator
         return context
-    
+
+    def get_paginated_events(self):
+        page = self.request.GET.get('page', 1)
+        paginator = Paginator(self.get_queryset(), self.paginate_by)
+
+        try:
+            return paginator.page(page)
+        except PageNotAnInteger:
+            return paginator.page(1)
+        except EmptyPage:
+            return paginator.page(paginator.num_pages)
+
     
 class EventDetails(DetailView):
     model = Event
@@ -118,13 +110,7 @@ class EventsMapView(TemplateView):
     paginate_by = 20
     
     def get_queryset(self):
-        filtered_options = self.request.session.get("event_filters", {})
-        
-        queryset = get_events_base(self.request)
-        queryset = filter_events_base(filtered_options, queryset)
-        queryset = sorted_events_session(queryset, self.request)
-        
-        return queryset
+        return get_filtered_queryset(self.request)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

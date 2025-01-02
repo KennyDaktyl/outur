@@ -82,7 +82,13 @@
 }
 
 .event-item {
-    min-height: 390px;
+    height: 320px;
+}
+
+@media (max-width: 1200px) {
+    .event-item {
+        height: 400px;
+    }
 }
 
 .page-item.active .page-link {
@@ -129,4 +135,8 @@
     #map-container {
         height: 700px;
     }
+}
+
+.hero-container {
+    height: 200px;
 }

@@ -1,10 +1,20 @@
 from django import forms
 
-from web.constans import ADDED_BY_CHOICES, ENTRY_CHOICES, LOCATION_CHOICES
+from web.constans import ADDED_BY_CHOICES, ENTRY_CHOICES, LOCATION_CHOICES, DATE_CHOICES
 from web.models.categories import Category
 
 
 class EventFilterForm(forms.Form):
+    date_filter = forms.ChoiceField(
+        choices=DATE_CHOICES,
+        widget=forms.Select(attrs={'id': 'date-filter'}),
+        label="Kiedy"
+    )
+    selected_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date', 'id': 'selected-date'}),
+        label="Wybierz datę"
+    )
     categories = forms.ModelMultipleChoiceField(
         queryset=Category.objects.filter(is_active=True),
         widget=forms.CheckboxSelectMultiple,

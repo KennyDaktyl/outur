@@ -49,7 +49,7 @@ class EventForm(forms.ModelForm):
             'house_number', 'apartment_number', 'description', 'main_image', 'categories', 'one_day_date',
             'start_date', 'end_date', 'website', 'contact_email', 'event_type', 'location_type', 'entry_type',
             'added_by', 'day_of_week', 'main_image', 'gallery_image_1', 'gallery_image_2', 'gallery_image_3',
-            'gallery_image_4',
+            'gallery_image_4', 'is_active',
         ]
         widgets = {
             'categories': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-inline'}),
