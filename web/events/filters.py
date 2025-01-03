@@ -1,20 +1,24 @@
-from django.db.models import Count, Q
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
 from django.conf import settings
 
 from datetime import datetime, timedelta
-from django.db.models import Case, When, Value, IntegerField
-
+from django.db.models import Case, When, Value, DateTimeField, F, Count, Q
 from web.events.forms import EventFilterForm
 from web.models.events import Event
 
 
 def get_events_base(request):
-    queryset = Event.objects.all().annotate(
-            participants_count=Count('participants'),
-            likes_count=Count('likes'),
-        )
+    today = datetime.now().date()
+    queryset = Event.objects.annotate(
+        participants_count=Count('participants'),
+        likes_count=Count('likes'),
+    ).filter(
+        is_active=True 
+    ).exclude(
+        Q(event_type='one_day', one_day_date__lt=today) | 
+        Q(event_type='multi_day', end_date__lt=today)  
+    )
     if request.session.get("user_location"):
         user_location = request.session["user_location"]
         queryset = queryset.annotate(
@@ -105,46 +109,49 @@ def sort_base(sort_option, search_query, queryset):
     if search_query:
         queryset = queryset.filter(Q(name__icontains=search_query))
 
-    today_index = datetime.now().weekday() 
+    today = datetime.now()
 
-    if sort_option == 'default':
-        queryset = queryset.annotate(
-            nearest_day=Case(
-                *[
-                    When(
-                        day_of_week__icontains=day_name,
-                        then=Value((day_index - today_index) % 7)
-                    )
-                    for day_name, day_index in {
-                        'monday': 0,
-                        'tuesday': 1,
-                        'wednesday': 2,
-                        'thursday': 3,
-                        'friday': 4,
-                        'saturday': 5,
-                        'sunday': 6,
-                    }.items()
-                ],
-                default=Value(999), 
-                output_field=IntegerField()
-            )
-        ).annotate(
-            sort_date=Case(
-                When(is_recurring=True, then=F('nearest_day')),
-                When(one_day_date__isnull=False, then=F('one_day_date')),
-                When(is_multi_day=True, then=F('start_date')),
-                default=None,
-                output_field=IntegerField()
-            )
-        ).order_by('sort_date', 'name')
+    queryset = queryset.annotate(
+        nearest_day_as_date=Case(
+            *[
+                When(
+                    day_of_week__icontains=day_name,
+                    then=Value(today + timedelta(days=(day_index - today.weekday()) % 7))
+                )
+                for day_name, day_index in {
+                    'monday': 0,
+                    'tuesday': 1,
+                    'wednesday': 2,
+                    'thursday': 3,
+                    'friday': 4,
+                    'saturday': 5,
+                    'sunday': 6,
+                }.items()
+            ],
+            default=None, 
+            output_field=DateTimeField()
+        )
+    ).annotate(
+        sort_date=Case(
+            When(event_type='recurring', then=F('nearest_day_as_date')),
+            When(event_type='one_day', then=F('one_day_date')), 
+            When(event_type='multi_day', then=F('start_date')), 
+            default=None,
+            output_field=DateTimeField()
+        )
+    )
+
+    if sort_option in ['default', 'newest', '']:
+        queryset = queryset.order_by('sort_date', 'name') 
 
     elif sort_option == 'popularity':
-        queryset = queryset.order_by('-likes_count', '-start_date')
+        queryset = queryset.order_by('-likes_count', 'sort_date', 'name') 
 
     elif sort_option == 'participants':
-        queryset = queryset.order_by('-participants_count', '-start_date')
+        queryset = queryset.order_by('-participants_count', 'sort_date', 'name') 
 
     return queryset
+
     
 def sorted_events_session(queryset, request):
     search_query = request.GET.get('search', '').strip()
@@ -164,7 +171,7 @@ def sorted_events_ajax(queryset, request):
 
 def get_filtered_queryset(request):
     session_filters = request.session.get("event_filters", {})
-    request_filters = request.GET or session_filters
+    request_filters = {**session_filters, **request.GET.dict()}
 
     filter_form = EventFilterForm(request_filters)
 

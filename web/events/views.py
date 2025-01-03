@@ -7,13 +7,10 @@ from django.http import Http404
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.urls import reverse
-from django.contrib.gis.measure import D
-from django.db.models import Q 
-from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
 
-from web.events.filters import filter_events, filter_events_base, get_events_base, get_filtered_queryset, sorted_events_ajax, sorted_events_session
+from web.events.filters import get_filtered_queryset
 from web.events.forms import AbuseReportForm, EventFilterForm
 from web.events.serializers import EventSerializer
 from web.models.events import Event
