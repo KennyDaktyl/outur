@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="col-12 d-flex flex-wrap justify-content-between align-items-center mt-2">
-                <p class="col-12 col-xl-8 text-dark mb-2">{{ event.address }}</p>
+                <p class="col-12 col-xl-8 text-dark mb-2">{{ event.address }}{% if event.distance %}&nbsp;{{ event.distance|floatformat:2 }}km{% endif %}</p>
                 <div class="col-12 col-xl-3 d-flex justify-content-end align-items-center">
                     {% if event.event_type == 'one_day' %}
                     <span>{{ event.one_day_date }}</span>

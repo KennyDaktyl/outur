@@ -120,3 +120,6 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 if os.environ.get('ENVIRONMENT') in ['production', 'staging', 'staging-test-prod', 'dev']:
     EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', '').lower() == 'true'
     EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', '').lower() == 'true'
+
+
+MAX_DISTANCE = 50

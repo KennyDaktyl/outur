@@ -1,4 +1,5 @@
 from django.contrib.gis.measure import D
+from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
 from django.conf import settings
 
@@ -21,11 +22,19 @@ def get_events_base(request):
     )
     if request.session.get("user_location"):
         user_location = request.session["user_location"]
+        try:
+            latitude, longitude = map(float, user_location.split(','))
+        except ValueError:
+            raise ValueError("Nieprawidłowy format lokalizacji w sesji. Oczekiwany format: 'lat,lng'.")
+
+        user_location_point = Point(longitude, latitude, srid=4326)
         queryset = queryset.annotate(
-            distance=Distance("location", user_location)
-        ).filter(
-            location__distance_lte=(user_location, D(km=settings.MAX_DISTANCE))
+            distance=Distance("location", user_location_point) / 1000
         )
+        # .filter(
+        #     location__distance_lte=(user_location_point, D(km=settings.MAX_DISTANCE))
+        # )
+
     return queryset
     
     
@@ -149,6 +158,8 @@ def sort_base(sort_option, search_query, queryset):
 
     elif sort_option == 'participants':
         queryset = queryset.order_by('-participants_count', 'sort_date', 'name') 
+    elif sort_option == 'nearest':
+        queryset = queryset.order_by('distance', 'sort_date', 'name')
 
     return queryset
 
@@ -172,6 +183,12 @@ def sorted_events_ajax(queryset, request):
 def get_filtered_queryset(request):
     session_filters = request.session.get("event_filters", {})
     request_filters = {**session_filters, **request.GET.dict()}
+    
+    if "user_location" in request_filters:
+        request.session["user_location"] = request_filters["user_location"]
+        request_filters.pop("user_location")
+    else:
+        request.session["user_location"] = None
 
     filter_form = EventFilterForm(request_filters)
 

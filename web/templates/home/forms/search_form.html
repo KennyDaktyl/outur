@@ -1,4 +1,4 @@
-<form class="{{ form_classes }}" method="get" action="{{ form_action }}">
+<form class="filter-form {{ form_classes }}" method="get" action="{{ form_action }}" id="filter-form">
     <!-- Pole wyszukiwania -->
     <input 
         type="text" 
@@ -12,16 +12,17 @@
     <!-- Select do sortowania -->
     <select 
         name="sort" 
-        class="form-select {{ select_classes }}" 
-        aria-label="Sortuj według">
+        class="form-select sort-select {{ select_classes }}" 
+        aria-label="Sortuj według"
+        id="sort-select"
+    >
         <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>sortuj: Najnowsze</option>
         <option value="popularity" {% if request.GET.sort == 'popularity' %}selected{% endif %}>sortuj: Popularność</option>
         <option value="participants" {% if request.GET.sort == 'participants' %}selected{% endif %}>sortuj: Liczba uczestników</option>
-        {% if request.session.user_location %}
-            <option value="nearest" {% if request.GET.sort == 'nearest' %}selected{% endif %}>sortuj: Najbliżej mnie</option>
-        {% endif %}
+        <option value="nearest" {% if request.GET.sort == 'nearest' %}selected{% endif %}>sortuj: Najbliżej mnie</option>
     </select>
 
     <!-- Przycisk wyszukiwania -->
     <button class="btn search-button text-white {{ button_classes }}" type="submit">Szukaj</button>
 </form>
+
