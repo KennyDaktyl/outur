@@ -64,6 +64,10 @@ def make_thumbnail(
                     f"Błąd otwarcia pliku: {image.path}. Error message: {str(e)}"
                 )
                 continue
+            
+            if ftype == "JPEG" and img.mode == "RGBA":
+                img = img.convert("RGB")
+                
             max_size = size
             width, height = img.size
             aspect_ratio = width / height
