@@ -110,6 +110,18 @@ def ajax_filter_events_map(request):
                     icon=folium.Icon(color="blue", icon="info-sign")
                 ).add_to(folium_map)
 
+        user_location = request.session.get('user_location') 
+        if user_location:
+            latitude, longitude = map(float, user_location.split(','))
+
+            if latitude and longitude:
+                folium.Marker(
+                    location=[latitude, longitude],
+                    popup="Twoja lokalizacja",
+                    tooltip="Jesteś tutaj",
+                    icon=folium.Icon(color="red", icon="user")
+                ).add_to(folium_map)
+                
         map_html = folium_map._repr_html_()
         
         soup = BeautifulSoup(map_html, 'html.parser')

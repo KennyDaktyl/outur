@@ -90,6 +90,18 @@ class EventMapView(TemplateView):
             popup=event.name,
             tooltip="Kliknij, aby zobaczyć szczegóły"
         ).add_to(folium_map)
+        
+        user_location = self.request.session.get('user_location') 
+        if user_location:
+            latitude, longitude = map(float, user_location.split(','))
+
+            if latitude and longitude:
+                folium.Marker(
+                    location=[latitude, longitude],
+                    popup="Twoja lokalizacja",
+                    tooltip="Jesteś tutaj",
+                    icon=folium.Icon(color="red", icon="user")
+                ).add_to(folium_map)
 
         context['event'] = event
         
@@ -149,6 +161,18 @@ class EventsMapView(TemplateView):
                     icon=folium.Icon(color="blue", icon="info-sign")
                 ).add_to(folium_map)
 
+        user_location = self.request.session.get('user_location') 
+        if user_location:
+            latitude, longitude = map(float, user_location.split(','))
+
+            if latitude and longitude:
+                folium.Marker(
+                    location=[latitude, longitude],
+                    popup="Twoja lokalizacja",
+                    tooltip="Jesteś tutaj",
+                    icon=folium.Icon(color="red", icon="user")
+                ).add_to(folium_map)
+                
         map_html = folium_map._repr_html_()
         
 

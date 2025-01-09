@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 setTimeout(() => {
                     if (!map) {
-                        map = L.map('map').setView([52.2297, 21.0122], 6);
+                        map = L.map('map').setView([52.0670, 19.4790], 6);
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                             attribution: '© OpenStreetMap contributors'
                         }).addTo(map);

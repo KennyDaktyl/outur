@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const form = document.querySelector(formSelector);
         const url = form.getAttribute("action").replace(" ", "");
         
-        const mapContainer = document.querySelector("#map");
+        const mapContainer = document.querySelector("#events_map");
         const eventsContainer = document.querySelector(".event_listing");
         const paginationContainer = document.querySelector(".pagination-container");
 

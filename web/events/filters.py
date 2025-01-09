@@ -114,7 +114,7 @@ def filter_events(request):
     return queryset, filter_form
 
 
-def sort_base(sort_option, search_query, queryset):
+def sort_base(sort_option, search_query, queryset, user_location=None):
     if search_query:
         queryset = queryset.filter(Q(name__icontains=search_query))
 
@@ -158,7 +158,7 @@ def sort_base(sort_option, search_query, queryset):
 
     elif sort_option == 'participants':
         queryset = queryset.order_by('-participants_count', 'sort_date', 'name') 
-    elif sort_option == 'nearest':
+    elif sort_option == 'nearest' and user_location:
         queryset = queryset.order_by('distance', 'sort_date', 'name')
 
     return queryset
@@ -170,23 +170,26 @@ def sorted_events_session(queryset, request):
     
     request.session["sort"] = sort_option
     request.session["search"] = search_query
+    user_location = request.session.get("user_location")
     
-    return sort_base(sort_option, search_query, queryset)
+    return sort_base(sort_option, search_query, queryset, user_location)
 
 def sorted_events_ajax(queryset, request):
     sort_option = request.session["sort"]
     search_query = request.session["search"]
+    user_location = request.session.get("user_location")
     
-    return sort_base(sort_option, search_query, queryset)
+    return sort_base(sort_option, search_query, queryset, user_location)
 
 
 def get_filtered_queryset(request):
     session_filters = request.session.get("event_filters", {})
     request_filters = {**session_filters, **request.GET.dict()}
     
-    if "user_location" in request_filters:
-        request.session["user_location"] = request_filters["user_location"]
-        request_filters.pop("user_location")
+    if "user_location" in request_filters or request.session.get("user_location"):
+        request.session["user_location"] = request_filters.get("user_location") if request_filters.get("user_location") else request.session.get("user_location")
+        if "user_location" in request_filters:
+            request_filters.pop("user_location")
     else:
         request.session["user_location"] = None
 
